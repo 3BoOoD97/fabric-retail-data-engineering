@@ -254,55 +254,55 @@ DESCRIBE bronze.orders;
 
 -- MAGIC %%pyspark
 -- MAGIC # bronze.orders Exploration PYSPARK
--- MAGIC 
+-- MAGIC  
 -- MAGIC from pyspark.sql.functions import trim, col, min, max
 -- MAGIC df_orders= spark.table("bronze.orders")
--- MAGIC 
+-- MAGIC  
 -- MAGIC # Check null values
 -- MAGIC condition = " OR ".join([f"{c} IS NULL" for c in df_orders.columns])
 -- MAGIC df_orders.filter(condition).show()
--- MAGIC 
+-- MAGIC  
 -- MAGIC # Check Empty strings
 -- MAGIC str_columns = []
--- MAGIC 
+-- MAGIC  
 -- MAGIC for col_name, data_type in df_orders.dtypes:
--- MAGIC     if data_type == "string":
--- MAGIC         str_columns.append(col_name)
--- MAGIC 
--- MAGIC     
+-- MAGIC      if data_type == "string":
+-- MAGIC          str_columns.append(col_name)
+-- MAGIC  
+-- MAGIC      
 -- MAGIC for c in str_columns:
--- MAGIC     empty_count = df_orders.filter(trim(col(c))== "").count()
--- MAGIC     print(c, empty_count)
--- MAGIC 
+-- MAGIC      empty_count = df_orders.filter(trim(col(c))== "").count()
+-- MAGIC      print(c, empty_count)
+-- MAGIC  
 -- MAGIC # Check if OrderID are uniuqe 
 -- MAGIC Total_orders_rows= df_orders.count()
 -- MAGIC total_OID= df_orders.select("OrderID").distinct().count()
--- MAGIC 
+-- MAGIC  
 -- MAGIC print("Total rows: ", Total_orders_rows)
 -- MAGIC print("Total unique Order ID: ", total_OID)
--- MAGIC 
+-- MAGIC  
 -- MAGIC # Check if every customerID in order table exsist in customers table
 -- MAGIC df_customers= spark.table("bronze.customers")
--- MAGIC df_customers_ID = df_customers.select("CustomerID")
--- MAGIC df_orders_CusID = df_orders.select("CustomerID")
+-- MAGIC df_customers_ID = df_customers.select("CustomerID").distinct()
+-- MAGIC df_orders_CusID = df_orders.select("CustomerID").distinct()
 -- MAGIC customersID_diff = df_orders_CusID.exceptAll(df_customers_ID).count()
 -- MAGIC print("customersID in orders missing: ",customersID_diff)
--- MAGIC 
+-- MAGIC  
 -- MAGIC # OrderDate range
 -- MAGIC min_order_date = df_orders.select(min("OrderDate"))
 -- MAGIC max_order_date = df_orders.select(max("OrderDate"))
 -- MAGIC min_order_date.show()
 -- MAGIC max_order_date.show()
--- MAGIC 
--- MAGIC 
+-- MAGIC  
+-- MAGIC  
 -- MAGIC # Check if the OrderTime is in this format HH:mm:ss
 -- MAGIC simple_regex = r"^\d{2}:\d{2}:\d{2}$"
 -- MAGIC invalid_OrderTime_count = df_orders.filter(~col("OrderTime").rlike(simple_regex)).count()
--- MAGIC 
+-- MAGIC  
 -- MAGIC print("Total invalid order date:", invalid_OrderTime_count)
--- MAGIC 
+-- MAGIC  
 -- MAGIC # Check total orders for each customers
--- MAGIC total_orders_cus= df.groupBy("CustomerID").count()
+-- MAGIC total_orders_cus= df_orders.groupBy("CustomerID").count()
 -- MAGIC total_orders_cus.show()
 
 -- METADATA ********************
