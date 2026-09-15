@@ -39,8 +39,6 @@ df_order_details_bronze = spark.table("bronze.order_details")
 # CELL ********************
 
 #customers transformations
-
-from pyspark.sql.functions  import current_timestamp
 df_customers_silver = df_customers_bronze.select(
     "CustomerID",
     "Gender",
@@ -49,12 +47,10 @@ df_customers_silver = df_customers_bronze.select(
     "Region",
     "CustomerSegment",
     "SignUpDate"
-).withColumn("silver_load_timestamp", current_timestamp())
+)
 
 
 df_customers_silver.write.format("delta").mode("overwrite").saveAsTable("silver.customers")
-
-
 df_customers_silver.show()
 
 
@@ -125,6 +121,8 @@ df_orders_silver= df_orders_bronze.select(
     )
 )
 
+df_orders_silver.write.format("delta").mode("overwrite").saveAsTable("silver.orders")
+
 df_orders_silver.show(10, truncate=False)
 
 
@@ -139,15 +137,106 @@ df_orders_silver.show(10, truncate=False)
 
 # order_details transformations
 from pyspark.sql.functions import col, when, lit
+from pyspark.sql.types import  DecimalType
 
-#df_order_details_silver = df_order_details_bronze
-df_update = df_order_details_bronze.withColumn("ReturnReason",
+
+
+df_order_details_silver = df_order_details_bronze.withColumn("ReturnReason",
 when(col("IsReturned")==0, lit(None).cast("string")).otherwise(col("ReturnReason"))).withColumn(
 "ReturnDate", when(col("IsReturned")== 0, lit(None).cast("date")).otherwise(col("ReturnDate"))).withColumn(
 "ReturnTime", when(col("IsReturned")== 0, lit(None).cast("string")).otherwise(col("ReturnTime")))
 
 
-df_update.show()
+#Convert Unit Cost&Price and DiscountRate to Decimal before adding Derived columns
+df_order_details_silver = df_order_details_silver.withColumn(
+    "UnitCost", col("UnitCost").cast(DecimalType(18, 2))
+).withColumn(
+    "UnitPrice", col("UnitPrice").cast(DecimalType(18, 2))
+).withColumn(
+    "DiscountRate", col("DiscountRate").cast(DecimalType(5, 4))
+)
+
+
+
+# ===== Derived columns ========
+
+
+# GrossAmount col
+df_order_details_silver= df_order_details_silver.withColumn(
+    "GrossAmount", 
+    (col("UnitPrice") * col("Quantity")).cast(DecimalType(18, 2))
+).withColumn(
+    "DiscountAmount",
+    (col("GrossAmount") * col("DiscountRate")).cast(DecimalType(18, 2))
+).withColumn(
+    "NetAmount",
+    (col("GrossAmount") - col("DiscountAmount")).cast(DecimalType(18, 2))
+). withColumn(
+    "CostAmount",
+    (col("Quantity") * col("UnitCost")).cast(DecimalType(18, 2))
+).withColumn(
+    "ProfitAmount",
+    (col("NetAmount") - col("CostAmount")).cast(DecimalType(18, 2))
+).withColumn(
+    "ReturnAmount",
+    when(col("IsReturned")==1, col("NetAmount")).otherwise((lit(0))
+    ).cast(DecimalType(18, 2))
+)
+
+
+df_order_details_silver.show()
+df_order_details_silver.printSchema()
+
+df_order_details_silver.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable("silver.order_details")
+
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# ===== Silver Validation =====
+
+from pyspark.sql.functions import col
+
+# OrderTimestamp check
+print(
+    "Null OrderTimestamp:",
+    df_orders_silver.filter(col("OrderTimestamp").isNull()).count()
+)
+
+# fields check
+print(
+    "Invalid non:",
+    df_order_details_silver.filter(
+        (col("IsReturned") == 0) &
+        (
+            col("ReturnDate").isNotNull() |
+            col("ReturnTime").isNotNull() |
+            col("ReturnReason").isNotNull()
+        )
+    ).count()
+)
+
+# Financial columns null check
+for c in ["GrossAmount", "DiscountAmount", "NetAmount", "CostAmount", "ProfitAmount", "ReturnAmount"]:
+    print(
+        f"Null {c}:",
+        df_order_details_silver.filter(col(c).isNull()).count()
+    )
+
+# ReturnAmount check
+print(
+    "Invalid ReturnAmount:",
+    df_order_details_silver.filter(
+        ((col("IsReturned") == 0) & (col("ReturnAmount") != 0)) |
+        ((col("IsReturned") == 1) & (col("ReturnAmount") != col("NetAmount")))
+    ).count()
+)
 
 # METADATA ********************
 
