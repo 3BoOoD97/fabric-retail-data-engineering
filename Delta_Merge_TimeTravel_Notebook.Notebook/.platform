@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "Delta_Merge_TimeTravel_Notebook"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "a8bf0a17-1d24-8dec-4427-585581a4e0c3"
+  }
+}
