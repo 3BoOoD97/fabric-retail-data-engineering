@@ -22,7 +22,54 @@
 
 -- CELL ********************
 
--- bronze.customers Exploration SPARK SQL
+-- MAGIC %%pyspark
+-- MAGIC from pyspark.sql.functions import col, sum, min, max, trim, lit, to_date, to_timestamp, current_date
+-- MAGIC from pyspark.sql.types import StructType, StructField, StringType, DateType, DoubleType, IntegerType, DecimalType
+
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "python",
+-- META   "language_group": "synapse_pyspark"
+-- META }
+
+-- CELL ********************
+
+-- MAGIC %%pyspark
+-- MAGIC 
+-- MAGIC ################# customers #################
+-- MAGIC 
+-- MAGIC 
+-- MAGIC # Load customers.csv and save it as a table
+-- MAGIC 
+-- MAGIC 
+-- MAGIC # Define the schema and load the CSV file and save it as a delta table
+-- MAGIC raw_customers_schema = StructType([
+-- MAGIC     StructField("CustomerID", StringType(), True),
+-- MAGIC     StructField("Gender", StringType(), True),
+-- MAGIC     StructField("Age", IntegerType(), True),
+-- MAGIC     StructField("City", StringType(), True),
+-- MAGIC     StructField("Region", StringType(), True),
+-- MAGIC     StructField("CustomerSegment", StringType(), True),
+-- MAGIC     StructField("SignUpDate", DateType(), True),
+-- MAGIC ])
+-- MAGIC 
+-- MAGIC df_raw_customers = spark.read.option("header", True).schema(raw_customers_schema).csv("Files/raw/customers.csv")
+-- MAGIC 
+-- MAGIC df_raw_customers.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable("bronze.customers")
+
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "python",
+-- META   "language_group": "synapse_pyspark"
+-- META }
+
+-- CELL ********************
+
+-- bronze.customers Exploration 
 SELECT * FROM bronze.customers LIMIT 10;
 SELECT COUNT(*) FROM bronze.customers; 
 DESCRIBE bronze.customers;
@@ -39,10 +86,8 @@ DESCRIBE bronze.customers;
 
 
 %%pyspark
-# bronze.customers Exploration PYSPARK
+### bronze.customers Exploration PYSPARK
 
-
-from pyspark.sql.functions import col, sum, min, max, trim
 
 # Check if we have null values
 df = spark.table("bronze.customers")
@@ -106,7 +151,34 @@ max_sign_date.show()
 
 -- CELL ********************
 
--- bronze.categories Exploration SPARK SQL
+-- MAGIC %%pyspark
+-- MAGIC ################# categories #################
+-- MAGIC 
+-- MAGIC 
+-- MAGIC # Load categories.csv and save it as a table
+-- MAGIC 
+-- MAGIC 
+-- MAGIC # Define the schema and load the CSV file and save it as a delta table
+-- MAGIC raw_categories_schema = StructType([
+-- MAGIC     StructField("CategoryID", StringType(), True),
+-- MAGIC     StructField("CategoryName", StringType(), True),
+-- MAGIC ])
+-- MAGIC 
+-- MAGIC df_raw_categories = spark.read.option("header", True).schema(raw_categories_schema).csv("Files/raw/categories.csv")
+-- MAGIC 
+-- MAGIC df_raw_categories.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable("bronze.categories")
+
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "python",
+-- META   "language_group": "synapse_pyspark"
+-- META }
+
+-- CELL ********************
+
+-- bronze.categories Exploration
 SELECT * FROM bronze.categories LIMIT 10;
 
 SELECT count(*) FROM bronze.categories;
@@ -134,7 +206,35 @@ WHERE TRIM(CategoryID) = '' OR TRIM(CategoryName) = '';
 
 -- CELL ********************
 
--- bronze.products Exploration SPARK SQL
+-- MAGIC %%pyspark
+-- MAGIC ################# products #################
+-- MAGIC 
+-- MAGIC 
+-- MAGIC # Load products.csv and save it as a table
+-- MAGIC 
+-- MAGIC 
+-- MAGIC # Define the schema and load the CSV file and save it as a delta table
+-- MAGIC raw_products_schema = StructType([
+-- MAGIC     StructField("ProductID", StringType(), True),
+-- MAGIC     StructField("ProductName", StringType(), True),
+-- MAGIC     StructField("CategoryID", StringType(), True),
+-- MAGIC ])
+-- MAGIC 
+-- MAGIC df_raw_products = spark.read.option("header", True).schema(raw_products_schema).csv("Files/raw/products.csv")
+-- MAGIC 
+-- MAGIC df_raw_products.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable("bronze.products")
+
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "python",
+-- META   "language_group": "synapse_pyspark"
+-- META }
+
+-- CELL ********************
+
+-- bronze.products Exploration 
 
 SELECT * FROM bronze.products LIMIT 10;
 
@@ -152,9 +252,10 @@ DESCRIBE bronze.products;
 -- CELL ********************
 
 -- MAGIC %%pyspark
--- MAGIC # bronze.products Exploration PYSPARK
+-- MAGIC ### bronze.products Exploration 
 -- MAGIC 
--- MAGIC from pyspark.sql.functions import col, trim
+-- MAGIC 
+-- MAGIC 
 -- MAGIC df= spark.table("bronze.products")
 -- MAGIC 
 -- MAGIC # Check null values
@@ -200,46 +301,25 @@ DESCRIBE bronze.products;
 
 -- CELL ********************
 
--- bronze.orders Exploration SPARK SQL
-SELECT * FROM bronze.orders LIMIT 10;
-
-SELECT count(*) FROM bronze.orders;
-
-DESCRIBE bronze.orders;
-
--- NOTE: Automatic schema inference incorrectly interpreted the source OrderTime field as a timestamp and attached an artificial date.
--- Therefore, this table will be loaded into a table using PYSPAK below 
-
--- METADATA ********************
-
--- META {
--- META   "language": "sparksql",
--- META   "language_group": "synapse_pyspark"
--- META }
-
--- CELL ********************
-
 -- MAGIC %%pyspark
--- MAGIC # Load the orders.csv and save it as a table 
--- MAGIC from pyspark.sql.types import StructType, StructField, StringType, DateType
+-- MAGIC ################# orders #################
 -- MAGIC 
--- MAGIC schema = StructType([
+-- MAGIC 
+-- MAGIC # Load orders.csv and save it as a table
+-- MAGIC 
+-- MAGIC 
+-- MAGIC # Define the schema and load the CSV file and save it as a delta table
+-- MAGIC raw_orders_schema = StructType([
 -- MAGIC     StructField("OrderID", StringType(), True),
 -- MAGIC     StructField("CustomerID", StringType(), True),
 -- MAGIC     StructField("OrderDate", DateType(), True),
--- MAGIC     StructField("OrderTime", StringType(), True)
+-- MAGIC     StructField("OrderTime", StringType(), True),
 -- MAGIC ])
 -- MAGIC 
+-- MAGIC df_raw_orders = spark.read.option("header", True).schema(raw_orders_schema).csv("Files/raw/orders.csv").withColumn("BatchDate", lit("2026-09-12").cast("DATE"))
 -- MAGIC 
--- MAGIC df = (spark.read.option("header", True)
--- MAGIC     .schema(schema)
--- MAGIC     .csv("Files/raw/orders.csv")
--- MAGIC )
--- MAGIC df.printSchema()
+-- MAGIC df_raw_orders.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable("bronze.orders")
 -- MAGIC 
--- MAGIC 
--- MAGIC df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable("bronze.orders")
--- MAGIC df.show(10, truncate=False)
 -- MAGIC 
 
 
@@ -252,10 +332,29 @@ DESCRIBE bronze.orders;
 
 -- CELL ********************
 
+-- bronze.orders Exploration 
+SELECT * FROM bronze.orders LIMIT 10;
+
+SELECT count(*) FROM bronze.orders;
+
+DESCRIBE bronze.orders;
+
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sparksql",
+-- META   "language_group": "synapse_pyspark"
+-- META }
+
+-- CELL ********************
+
 -- MAGIC %%pyspark
--- MAGIC # bronze.orders Exploration PYSPARK
+-- MAGIC ### bronze.orders Exploration 
+-- MAGIC 
+-- MAGIC 
+-- MAGIC 
 -- MAGIC  
--- MAGIC from pyspark.sql.functions import trim, col, min, max
 -- MAGIC df_orders= spark.table("bronze.orders")
 -- MAGIC  
 -- MAGIC # Check null values
@@ -314,30 +413,15 @@ DESCRIBE bronze.orders;
 
 -- CELL ********************
 
-SELECT * from bronze.order_details LIMIT 10;
-
-SELECT count(*) from bronze.order_details;
-
-DESCRIBE bronze.order_details;
-
--- This table will be re-uplaoded using PYSPAK to avoid adding an automate date to ReturnTime col
-
--- METADATA ********************
-
--- META {
--- META   "language": "sparksql",
--- META   "language_group": "synapse_pyspark"
--- META }
-
--- CELL ********************
-
 -- MAGIC %%pyspark
+-- MAGIC ################# order_details #################
+-- MAGIC 
+-- MAGIC 
 -- MAGIC # Load the order_details.csv and save it as a table 
--- MAGIC from pyspark.sql.types import StructType, StructField, StringType, DateType, DoubleType, IntegerType, DecimalType
--- MAGIC from pyspark.sql.functions import col, min, max, trim, to_date, to_timestamp, current_date, lit
+-- MAGIC 
 -- MAGIC 
 -- MAGIC # Define the schema and load the CSV file and save it as a delta table
--- MAGIC schema = StructType([
+-- MAGIC order_details_schema = StructType([
 -- MAGIC     StructField("OrderID", StringType(), True),
 -- MAGIC     StructField("ProductID", StringType(), True),
 -- MAGIC     StructField("Quantity", IntegerType(), True),
@@ -352,36 +436,62 @@ DESCRIBE bronze.order_details;
 -- MAGIC ])
 -- MAGIC 
 -- MAGIC 
--- MAGIC df= spark.read.option("header", True).schema(schema).csv("Files/raw/order_details.csv")
--- MAGIC df.show()
--- MAGIC df.printSchema()
+-- MAGIC df_order_details = spark.read.option("header", True).schema(order_details_schema).csv("Files/raw/order_details.csv").withColumn("BatchDate", lit("2026-09-12").cast("DATE"))
+-- MAGIC df_order_details.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable("bronze.order_details")
+
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "python",
+-- META   "language_group": "synapse_pyspark"
+-- META }
+
+-- CELL ********************
+
+SELECT * from bronze.order_details LIMIT 10;
+
+SELECT count(*) from bronze.order_details;
+
+DESCRIBE bronze.order_details;
+
+
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sparksql",
+-- META   "language_group": "synapse_pyspark"
+-- META }
+
+-- CELL ********************
+
+-- MAGIC %%pyspark
 -- MAGIC 
--- MAGIC df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable("bronze.order_details")
--- MAGIC df.show(10, truncate=False)
--- MAGIC 
+-- MAGIC ### bronze.order_details Exploration 
 -- MAGIC 
 -- MAGIC 
 -- MAGIC # Check null values
 -- MAGIC from pyspark.sql.functions import col
--- MAGIC condition = " OR ".join([f"{col} IS NULL" for col in df.columns])
+-- MAGIC condition = " OR ".join([f"{col} IS NULL" for col in df_order_details.columns])
 -- MAGIC 
--- MAGIC df.filter(condition).show()
+-- MAGIC df_order_details.filter(condition).show()
 -- MAGIC 
 -- MAGIC 
 -- MAGIC # Check if we have duplicate rows
--- MAGIC df_unique_rows= df.groupBy(df.columns).count()
+-- MAGIC df_unique_rows= df_order_details.groupBy(df_order_details.columns).count()
 -- MAGIC df_unique_rows.filter(col("count") > 1).show()
 -- MAGIC 
 -- MAGIC 
 -- MAGIC 
 -- MAGIC # Check if the same product may appear twice within the same order
--- MAGIC df_unique_orderID_ProductID=df.groupBy("OrderID","ProductID").count()
+-- MAGIC df_unique_orderID_ProductID=df_order_details.groupBy("OrderID","ProductID").count()
 -- MAGIC df_unique_orderID_ProductID.filter(col("count") > 1).show()
 -- MAGIC 
 -- MAGIC 
 -- MAGIC # Check if every orderID exsist in orders table 
 -- MAGIC df_orders_orderID= spark.table("bronze.orders").select("OrderID").distinct()
--- MAGIC df_ordersDet_orderID=df.select("OrderID").distinct()
+-- MAGIC df_ordersDet_orderID=df_order_details.select("OrderID").distinct()
 -- MAGIC 
 -- MAGIC dup_orderID_counter= df_ordersDet_orderID.exceptAll(df_orders_orderID).count()
 -- MAGIC print(f"Number of invalid OrderIDs: {dup_orderID_counter}")
@@ -389,7 +499,7 @@ DESCRIBE bronze.order_details;
 -- MAGIC 
 -- MAGIC # Check if every ProductID exsist in products table
 -- MAGIC df_products_productID= spark.table("bronze.products").select("ProductID").distinct()
--- MAGIC df_ordersDet_productID= df.select("ProductID").distinct()
+-- MAGIC df_ordersDet_productID= df_order_details.select("ProductID").distinct()
 -- MAGIC 
 -- MAGIC dup_productID_counter= df_ordersDet_productID.exceptAll(df_products_productID).count()
 -- MAGIC print(f"Number of invalid ProductID: {dup_productID_counter}")
@@ -397,43 +507,43 @@ DESCRIBE bronze.order_details;
 -- MAGIC 
 -- MAGIC # Check negative values & Min-Max for:
 -- MAGIC # Quantity
--- MAGIC df_quantity_checker = df.filter(col("Quantity")<0).show()
--- MAGIC df_quantity_min= df.select(min("Quantity")).show()
--- MAGIC df_quantity_max= df.select(max("Quantity")).show()
+-- MAGIC df_quantity_checker = df_order_details.filter(col("Quantity")<0).show()
+-- MAGIC df_quantity_min= df_order_details.select(min("Quantity")).show()
+-- MAGIC df_quantity_max= df_order_details.select(max("Quantity")).show()
 -- MAGIC 
 -- MAGIC # UnitCost
--- MAGIC df_UnitCost_checker = df.filter(col("UnitCost")<0).show()
--- MAGIC df_UnitCost_min= df.select(min("UnitCost")).show()
--- MAGIC df_UnitCost_max=df.select(max("UnitCost")).show()
+-- MAGIC df_UnitCost_checker = df_order_details.filter(col("UnitCost")<0).show()
+-- MAGIC df_UnitCost_min= df_order_details.select(min("UnitCost")).show()
+-- MAGIC df_UnitCost_max=df_order_details.select(max("UnitCost")).show()
 -- MAGIC 
 -- MAGIC # UnitPrice
--- MAGIC df_UnitCost_checker = df.filter(col("UnitPrice")<0).show()
--- MAGIC df_UnitCost_min= df.select(min("UnitPrice")).show()
--- MAGIC df_UnitCost_max=df.select(max("UnitPrice")).show()
+-- MAGIC df_UnitCost_checker = df_order_details.filter(col("UnitPrice")<0).show()
+-- MAGIC df_UnitCost_min= df_order_details.select(min("UnitPrice")).show()
+-- MAGIC df_UnitCost_max=df_order_details.select(max("UnitPrice")).show()
 -- MAGIC 
 -- MAGIC 
 -- MAGIC # Check if the value is not less than 0 or bigger than 1 for:
 -- MAGIC # DiscountRate
--- MAGIC df_UnitCost_checker = df.filter((col("DiscountRate")>1) | (col("DiscountRate")<0)).show()
+-- MAGIC df_UnitCost_checker = df_order_details.filter((col("DiscountRate")>1) | (col("DiscountRate")<0)).show()
 -- MAGIC 
 -- MAGIC # IsReturned
--- MAGIC df_UnitCost_checker = df.filter((col("IsReturned")>1) | (col("IsReturned")<0)).show()
+-- MAGIC df_UnitCost_checker = df_order_details.filter((col("IsReturned")>1) | (col("IsReturned")<0)).show()
 -- MAGIC 
 -- MAGIC 
 -- MAGIC #df_quantity_checker = df.filter(col("IsReturned")==1).show()
 -- MAGIC #df_IsReturned_col_value= df.select("IsReturned").distinct().show() # 0 = NOT Returned, 1 = Returned
 -- MAGIC 
 -- MAGIC 
--- MAGIC df_IsReturned_col_value = df.select("IsReturned")
+-- MAGIC df_IsReturned_col_value = df_order_details.select("IsReturned")
 -- MAGIC 
 -- MAGIC # Check when IsReturned is false then ReturnDate=9999-12-31, ReturnTime= 00:00:00, ReturnReason= None
--- MAGIC df_Not_Returned = df.filter(col("IsReturned")==0)
+-- MAGIC df_Not_Returned = df_order_details.filter(col("IsReturned")==0)
 -- MAGIC df_Not_Returned_checker = df_Not_Returned.filter((col("ReturnDate")!=lit("9999-12-31").cast("date")) | 
 -- MAGIC (col("ReturnTime")!="00:00:00") | (col("ReturnReason")!= "None"))
 -- MAGIC df_Not_Returned_checker.show()
 -- MAGIC 
 -- MAGIC # Check when IsReturned is true then ReturnDate, ReturnTime and ReturnReason have real values
--- MAGIC df_IsReturned = df.filter(col("IsReturned")==1)
+-- MAGIC df_IsReturned = df_order_details.filter(col("IsReturned")==1)
 -- MAGIC 
 -- MAGIC df_IsReturned_checker =df_IsReturned.filter(
 -- MAGIC     (to_date(col("ReturnDate"), "yyyy-MM-dd").isNull()) | 
@@ -461,5 +571,30 @@ DESCRIBE bronze.order_details;
 
 -- META {
 -- META   "language": "python",
+-- META   "language_group": "synapse_pyspark"
+-- META }
+
+-- CELL ********************
+
+SELECT COUNT(*) FROM bronze.orders;
+SELECT COUNT(*) FROM bronze.order_details;
+
+
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sparksql",
+-- META   "language_group": "synapse_pyspark"
+-- META }
+
+-- CELL ********************
+
+SELECT * FROM bronze.order_details LIMIT 10
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sparksql",
 -- META   "language_group": "synapse_pyspark"
 -- META }
