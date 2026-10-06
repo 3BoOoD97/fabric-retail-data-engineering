@@ -101,6 +101,18 @@ df_products_silver.write.format("delta").mode("overwrite").saveAsTable("silver.p
 
 # CELL ********************
 
+# MAGIC %%sql
+# MAGIC SELECT * FROM bronze.orders LIMIT 10
+
+# METADATA ********************
+
+# META {
+# META   "language": "sparksql",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
 # orders transformations
 from pyspark.sql.functions import col, concat_ws, to_timestamp
 
@@ -108,7 +120,8 @@ df_orders_silver= df_orders_bronze.select(
         "OrderID",
         "CustomerID",
         "OrderDate",
-        "OrderTime"
+        "OrderTime",
+        "BatchDate",
 ).withColumn(
     "OrderTimestamp",
     to_timestamp(
@@ -121,7 +134,7 @@ df_orders_silver= df_orders_bronze.select(
     )
 )
 
-df_orders_silver.write.format("delta").mode("overwrite").saveAsTable("silver.orders")
+df_orders_silver.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable("silver.orders")
 
 df_orders_silver.show(10, truncate=False)
 
