@@ -20,38 +20,10 @@
 # META   }
 # META }
 
-# CELL ********************
+# PARAMETERS CELL ********************
 
-# Load Bronze tables
-df_categories_bronze= spark.table("bronze.categories")
-df_customers_bronze= spark.table("bronze.customers")
-df_orders_bronze = spark.table("bronze.orders")
-df_products_bronze = spark.table("bronze.products")
-df_order_details_bronze = spark.table("bronze.order_details")
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-#customers transformations
-df_customers_silver = df_customers_bronze.select(
-    "CustomerID",
-    "Gender",
-    "Age",
-    "City",
-    "Region",
-    "CustomerSegment",
-    "SignUpDate"
-)
-
-
-df_customers_silver.write.format("delta").mode("overwrite").saveAsTable("silver.customers")
-df_customers_silver.show()
+# This value will be overwritten by the Pipeline
+ProcessDate = "2026-09-26"
 
 
 # METADATA ********************
@@ -63,34 +35,18 @@ df_customers_silver.show()
 
 # CELL ********************
 
-#categories transformations
-
-df_categories_silver = df_categories_bronze.select(
-    "CategoryID",
-    "CategoryName"
-)
-
-df_categories_silver.write.format("delta").mode("overwrite").saveAsTable("silver.categories")
+from pyspark.sql.functions import col, to_timestamp, concat_ws
+from delta.tables import DeltaTable
 
 
-# METADATA ********************
+date_path = ProcessDate.replace("-", "/")
 
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
 
-# CELL ********************
+df_orders_bronze = spark.table("bronze.orders").filter(col("BatchDate")==ProcessDate)
+df_order_details_bronze = spark.table("bronze.order_details").filter(col("BatchDate")==ProcessDate)
 
-#products transformations
-df_products_silver = df_products_bronze.select(
-    "ProductID",
-    "ProductName",
-    "CategoryID"
-)
-
-df_products_silver.write.format("delta").mode("overwrite").saveAsTable("silver.products")
-
+df_orders_bronze.show()
+df_order_details_bronze.show()
 
 # METADATA ********************
 
@@ -102,7 +58,9 @@ df_products_silver.write.format("delta").mode("overwrite").saveAsTable("silver.p
 # CELL ********************
 
 # MAGIC %%sql
-# MAGIC SELECT * FROM bronze.orders LIMIT 10
+# MAGIC SELECT * FROM silver.orders WHERE OrderID = 'ORD10003' or OrderID="ORD10002";
+# MAGIC SELECT * FROM silver.order_details WHERE OrderID IN ('ORD10002', 'ORD10003');
+
 
 # METADATA ********************
 
@@ -113,16 +71,9 @@ df_products_silver.write.format("delta").mode("overwrite").saveAsTable("silver.p
 
 # CELL ********************
 
-# orders transformations
-from pyspark.sql.functions import col, concat_ws, to_timestamp
+# orders transformation 
 
-df_orders_silver= df_orders_bronze.select(
-        "OrderID",
-        "CustomerID",
-        "OrderDate",
-        "OrderTime",
-        "BatchDate",
-).withColumn(
+df_orders_silver= df_orders_bronze.select("OrderID", "CustomerID", "OrderDate", "OrderTime", "BatchDate").withColumn(
     "OrderTimestamp",
     to_timestamp(
             concat_ws(
@@ -133,10 +84,17 @@ df_orders_silver= df_orders_bronze.select(
             "yyyy-MM-dd HH:mm:ss"
     )
 )
+ 
+df_orders_silver.show()
 
-df_orders_silver.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable("silver.orders")
+# df_orders_silver -> orders table UPSERT
+# Prepare target & source tables
+source_orders = df_orders_silver
+target_orders = DeltaTable.forName(spark, "silver.orders")
 
-df_orders_silver.show(10, truncate=False)
+target_orders.alias("target_table").merge(source_orders.alias("source_table"), "target_table.OrderID = source_table.OrderID").whenMatchedUpdateAll().whenNotMatchedInsertAll().execute() 
+
+
 
 
 # METADATA ********************
@@ -151,7 +109,6 @@ df_orders_silver.show(10, truncate=False)
 # order_details transformations
 from pyspark.sql.functions import col, when, lit
 from pyspark.sql.types import  DecimalType
-
 
 
 df_order_details_silver = df_order_details_bronze.withColumn("ReturnReason",
@@ -197,10 +154,18 @@ df_order_details_silver= df_order_details_silver.withColumn(
 )
 
 
-df_order_details_silver.show()
-df_order_details_silver.printSchema()
+#df_order_details_silver = df_order_details_silver.drop("BatchDate")
 
-df_order_details_silver.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable("silver.order_details")
+df_order_details_silver.show()
+
+# df_order_details_silver -> order_details table UPSERT
+# Prepare target & source tables
+source_order_details = df_order_details_silver
+target_order_details = DeltaTable.forName(spark, "silver.order_details")
+
+target_order_details.alias("target_table").merge(source_order_details.alias("source_table"), "target_table.OrderID = source_table.OrderID AND target_table.ProductID = source_table.ProductID").whenMatchedUpdateAll().whenNotMatchedInsertAll().execute() 
+
+
 
 
 # METADATA ********************
@@ -212,48 +177,14 @@ df_order_details_silver.write.format("delta").mode("overwrite").option("overwrit
 
 # CELL ********************
 
-# ===== Silver Validation =====
+# MAGIC %%sql
+# MAGIC SELECT * FROM silver.orders WHERE OrderID = 'ORD10003' or OrderID="ORD10002";
+# MAGIC SELECT * FROM silver.order_details WHERE OrderID IN ('ORD10002', 'ORD10003');
 
-from pyspark.sql.functions import col
-
-# OrderTimestamp check
-print(
-    "Null OrderTimestamp:",
-    df_orders_silver.filter(col("OrderTimestamp").isNull()).count()
-)
-
-# fields check
-print(
-    "Invalid non:",
-    df_order_details_silver.filter(
-        (col("IsReturned") == 0) &
-        (
-            col("ReturnDate").isNotNull() |
-            col("ReturnTime").isNotNull() |
-            col("ReturnReason").isNotNull()
-        )
-    ).count()
-)
-
-# Financial columns null check
-for c in ["GrossAmount", "DiscountAmount", "NetAmount", "CostAmount", "ProfitAmount", "ReturnAmount"]:
-    print(
-        f"Null {c}:",
-        df_order_details_silver.filter(col(c).isNull()).count()
-    )
-
-# ReturnAmount check
-print(
-    "Invalid ReturnAmount:",
-    df_order_details_silver.filter(
-        ((col("IsReturned") == 0) & (col("ReturnAmount") != 0)) |
-        ((col("IsReturned") == 1) & (col("ReturnAmount") != col("NetAmount")))
-    ).count()
-)
 
 # METADATA ********************
 
 # META {
-# META   "language": "python",
+# META   "language": "sparksql",
 # META   "language_group": "synapse_pyspark"
 # META }

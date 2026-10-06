@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "Silver_Daily_Incremental_Notebook"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4628f7c0-ae4a-ae98-4064-22dbc20a70aa"
+  }
+}

@@ -67,8 +67,7 @@ df_daily_sales = df_join_order_details_orders.groupBy("OrderDate").agg(
 
 df_daily_sales.show()
 
-df_daily_sales.write.format("delta").mode("overwrite").option("mergeSchema", "true").saveAsTable("gold.daily_sales")
-
+df_daily_sales.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable("gold.daily_sales")
 
 
 # METADATA ********************
@@ -167,5 +166,41 @@ df_customer_summary.write.format("delta").mode("overwrite").saveAsTable("gold.cu
 
 # META {
 # META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# MAGIC %%sql
+# MAGIC SELECT * FROM silver.orders WHERE BatchDate = '2026-09-26';
+# MAGIC SELECT * FROM bronze.orders WHERE BatchDate = '2026-09-26';
+
+# METADATA ********************
+
+# META {
+# META   "language": "sparksql",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# MAGIC %%sql
+# MAGIC 
+# MAGIC SELECT *
+# MAGIC FROM gold.daily_sales
+# MAGIC WHERE OrderDate = '2026-09-26';
+# MAGIC 
+# MAGIC SELECT *
+# MAGIC FROM gold.product_performance
+# MAGIC WHERE ProductID IN ('PRDCT0022', 'PRDCT0027');
+# MAGIC 
+# MAGIC SELECT *
+# MAGIC FROM gold.customer_summary
+# MAGIC WHERE CustomerID IN ('CSTMR0271', 'CSTMR0102');
+
+# METADATA ********************
+
+# META {
+# META   "language": "sparksql",
 # META   "language_group": "synapse_pyspark"
 # META }
