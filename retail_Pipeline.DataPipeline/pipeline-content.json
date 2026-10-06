@@ -1,0 +1,699 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "BinarySource",
+            "formatSettings": {
+              "type": "BinaryReadSettings"
+            },
+            "storeSettings": {
+              "type": "AzureBlobStorageReadSettings",
+              "recursive": false
+            },
+            "datasetSettings": {
+              "type": "Binary",
+              "typeProperties": {
+                "location": {
+                  "type": "AzureBlobStorageLocation",
+                  "container": "retail-incoming",
+                  "folderPath": {
+                    "value": "@replace(variables('RunDate'),'-','/')",
+                    "type": "Expression"
+                  },
+                  "fileName": "orders_daily.csv"
+                }
+              },
+              "externalReferences": {
+                "connection": "fe76fe2c-d88a-41e0-8a2f-77d18c748613"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "BinarySink",
+            "storeSettings": {
+              "type": "AzureBlobStorageWriteSettings"
+            },
+            "datasetSettings": {
+              "type": "Binary",
+              "typeProperties": {
+                "location": {
+                  "type": "LakehouseLocation",
+                  "folderPath": {
+                    "value": "@concat('incoming/orders/', formatDateTime(pipeline().parameters.ProcessDate, 'yyyy/MM/dd'))",
+                    "type": "Expression"
+                  },
+                  "fileName": "orders_daily.csv"
+                }
+              },
+              "linkedService": {
+                "name": "retail_Lakhouse",
+                "properties": {
+                  "type": "Lakehouse",
+                  "typeProperties": {
+                    "artifactId": "524c0401-e6fd-8f69-40e7-dd0a39e65af4",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000",
+                    "rootFolder": "Files"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "enableStaging": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "CopyDailyOrders",
+        "dependsOn": [
+          {
+            "activity": "RunDate",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "BinarySource",
+            "formatSettings": {
+              "type": "BinaryReadSettings"
+            },
+            "storeSettings": {
+              "type": "AzureBlobStorageReadSettings",
+              "recursive": false
+            },
+            "datasetSettings": {
+              "type": "Binary",
+              "typeProperties": {
+                "location": {
+                  "type": "AzureBlobStorageLocation",
+                  "container": "retail-incoming",
+                  "folderPath": {
+                    "value": "@formatDateTime(pipeline().parameters.ProcessDate, 'yyyy/MM/dd')",
+                    "type": "Expression"
+                  },
+                  "fileName": "order_details_daily.csv"
+                }
+              },
+              "externalReferences": {
+                "connection": "fe76fe2c-d88a-41e0-8a2f-77d18c748613"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "BinarySink",
+            "storeSettings": {
+              "type": "AzureBlobStorageWriteSettings"
+            },
+            "datasetSettings": {
+              "type": "Binary",
+              "typeProperties": {
+                "location": {
+                  "type": "LakehouseLocation",
+                  "folderPath": {
+                    "value": "@concat('incoming/order_details/', formatDateTime(variables('RunDate'), 'yyyy/MM/dd'))",
+                    "type": "Expression"
+                  },
+                  "fileName": "order_details_daily.csv"
+                }
+              },
+              "linkedService": {
+                "name": "retail_Lakhouse",
+                "properties": {
+                  "type": "Lakehouse",
+                  "typeProperties": {
+                    "artifactId": "524c0401-e6fd-8f69-40e7-dd0a39e65af4",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000",
+                    "rootFolder": "Files"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "enableStaging": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "CopyDailyOrderDetails",
+        "dependsOn": [
+          {
+            "activity": "CopyDailyOrders",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "5ff12693-b316-bf2e-4817-d5dad9ca9f2e",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "parameters": {
+            "ProcessDate": {
+              "value": {
+                "value": "@variables('RunDate')",
+                "type": "Expression"
+              },
+              "type": "string"
+            }
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "ValidateDailyFiles",
+        "dependsOn": [
+          {
+            "activity": "CopyDailyOrderDetails",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@equals(activity('ValidateDailyFiles').output.result.exitValue, 'True')",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": "e18651c9-3133-9763-48fa-2bf0163f272d",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "ProcessDate": {
+                    "value": {
+                      "value": "@variables('RunDate')",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  }
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Load_Daily_To_Bronze_Notebook",
+              "dependsOn": []
+            },
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": "4628f7c0-ae4a-ae98-4064-22dbc20a70aa",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "ProcessDate": {
+                    "value": {
+                      "value": "@variables('RunDate')",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  }
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Silver_Daily_Incremental_Notebook",
+              "dependsOn": [
+                {
+                  "activity": "Load_Daily_To_Bronze_Notebook",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": "eba4cc94-9a8a-a923-48ee-f3d1062a5f0c",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "ProcessDate ": {
+                    "value": {
+                      "value": "@variables('RunDate')",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  }
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Gold_Daily_Incremental_Notebook",
+              "dependsOn": [
+                {
+                  "activity": "Silver_Daily_Incremental_Notebook",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Office365Email",
+              "typeProperties": {
+                "body": "<p>Daily_Transformation_Passed</p>",
+                "to": "abodn70@hotmail.com",
+                "subject": "Daily_Transformation_Passed"
+              },
+              "externalReferences": {
+                "connection": "820364d4-2715-47c3-a3cf-0db2ad03f825"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Daily_Transformation_Passed",
+              "dependsOn": [
+                {
+                  "activity": "Gold_Daily_Incremental_Notebook",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Office365Email",
+              "typeProperties": {
+                "body": "<p>Daily_Transformation_Failed</p>",
+                "to": "abodn70@hotmail.com",
+                "subject": "Transformation_Failed"
+              },
+              "externalReferences": {
+                "connection": "820364d4-2715-47c3-a3cf-0db2ad03f825"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Daily_Transformation_Failed",
+              "dependsOn": [
+                {
+                  "activity": "Load_Daily_To_Bronze_Notebook",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                },
+                {
+                  "activity": "Silver_Daily_Incremental_Notebook",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                },
+                {
+                  "activity": "Gold_Daily_Incremental_Notebook",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ]
+            }
+          ],
+          "ifFalseActivities": [
+            {
+              "type": "Office365Email",
+              "typeProperties": {
+                "body": "<p>Validation_Failed</p>",
+                "to": "abodn70@hotmail.com",
+                "subject": "Validation_Failed"
+              },
+              "externalReferences": {
+                "connection": "820364d4-2715-47c3-a3cf-0db2ad03f825"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Validation_Failed",
+              "dependsOn": [
+                {
+                  "activity": "Quarantine_Daily_OrderDetails",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Copy",
+              "typeProperties": {
+                "source": {
+                  "type": "BinarySource",
+                  "formatSettings": {
+                    "type": "BinaryReadSettings"
+                  },
+                  "storeSettings": {
+                    "type": "LakehouseReadSettings",
+                    "recursive": false
+                  },
+                  "datasetSettings": {
+                    "type": "Binary",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": {
+                          "value": "@concat(\n    'incoming/orders/',\n    formatDateTime(pipeline().parameters.ProcessDate, 'yyyy/MM/dd')\n)",
+                          "type": "Expression"
+                        },
+                        "fileName": "orders_daily.csv"
+                      }
+                    },
+                    "connectionSettings": {
+                      "name": "retail_Lakhouse",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "524c0401-e6fd-8f69-40e7-dd0a39e65af4",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "externalReferences": {
+                          "connection": "0ac02132-66f9-4b15-ba5d-53d49f34b221"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "sink": {
+                  "type": "BinarySink",
+                  "storeSettings": {
+                    "type": "LakehouseWriteSettings"
+                  },
+                  "datasetSettings": {
+                    "type": "Binary",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": {
+                          "value": "@concat(\n    'quarantine/orders/',\n    formatDateTime(variables('RunDate'), 'yyyy/MM/dd')\n)",
+                          "type": "Expression"
+                        },
+                        "fileName": "orders_daily.csv"
+                      }
+                    },
+                    "connectionSettings": {
+                      "name": "retail_Lakhouse",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "524c0401-e6fd-8f69-40e7-dd0a39e65af4",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "externalReferences": {
+                          "connection": "0ac02132-66f9-4b15-ba5d-53d49f34b221"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "enableStaging": false
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Quarantine_Daily_Orders",
+              "dependsOn": []
+            },
+            {
+              "type": "Copy",
+              "typeProperties": {
+                "source": {
+                  "type": "BinarySource",
+                  "formatSettings": {
+                    "type": "BinaryReadSettings"
+                  },
+                  "storeSettings": {
+                    "type": "LakehouseReadSettings",
+                    "recursive": false
+                  },
+                  "datasetSettings": {
+                    "type": "Binary",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": {
+                          "value": "@concat(\n    'incoming/order_details/',\n    formatDateTime(variables('RunDate'), 'yyyy/MM/dd')\n)",
+                          "type": "Expression"
+                        },
+                        "fileName": "order_details_daily.csv"
+                      }
+                    },
+                    "connectionSettings": {
+                      "name": "retail_Lakhouse",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "524c0401-e6fd-8f69-40e7-dd0a39e65af4",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "externalReferences": {
+                          "connection": "0ac02132-66f9-4b15-ba5d-53d49f34b221"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "sink": {
+                  "type": "BinarySink",
+                  "storeSettings": {
+                    "type": "LakehouseWriteSettings"
+                  },
+                  "datasetSettings": {
+                    "type": "Binary",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": {
+                          "value": "@concat('quarantine/order_details/', formatDateTime(pipeline().parameters.ProcessDate, 'yyyy/MM/dd'))",
+                          "type": "Expression"
+                        },
+                        "fileName": "order_details_daily.csv"
+                      }
+                    },
+                    "connectionSettings": {
+                      "name": "retail_Lakhouse",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "524c0401-e6fd-8f69-40e7-dd0a39e65af4",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "externalReferences": {
+                          "connection": "0ac02132-66f9-4b15-ba5d-53d49f34b221"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "enableStaging": false
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Quarantine_Daily_OrderDetails",
+              "dependsOn": [
+                {
+                  "activity": "Quarantine_Daily_Orders",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "name": "daily_update_IF",
+        "dependsOn": [
+          {
+            "activity": "ValidateDailyFiles",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Office365Email",
+        "typeProperties": {
+          "body": "<p>CopyOrders_Failed_Email</p>",
+          "to": "abodn70@hotmail.com",
+          "subject": "CopyOrders_Failed_Email"
+        },
+        "externalReferences": {
+          "connection": "820364d4-2715-47c3-a3cf-0db2ad03f825"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Technical_Failure_Email",
+        "dependsOn": [
+          {
+            "activity": "CopyDailyOrders",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Office365Email",
+        "typeProperties": {
+          "body": "<p>CopyOrderDetails_Failed_Email</p>",
+          "to": "abodn70@hotmail.com",
+          "subject": "CopyOrderDetails_Failed_Email"
+        },
+        "externalReferences": {
+          "connection": "820364d4-2715-47c3-a3cf-0db2ad03f825"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "CopyOrderDetails_Failed_Email",
+        "dependsOn": [
+          {
+            "activity": "CopyDailyOrderDetails",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Office365Email",
+        "typeProperties": {
+          "body": "<p>Validation_Technical_Failed_Email</p>",
+          "to": "abodn70@hotmail.com",
+          "subject": "Validation_Technical_Failed_Email"
+        },
+        "externalReferences": {
+          "connection": "820364d4-2715-47c3-a3cf-0db2ad03f825"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Validation_Technical_Failed_Email",
+        "dependsOn": [
+          {
+            "activity": "ValidateDailyFiles",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "RunDate",
+          "value": {
+            "value": "@if(\n    empty(pipeline().parameters.ProcessDate),\n    formatDateTime(pipeline().TriggerTime,'yyyy-MM-dd'),\n    pipeline().parameters.ProcessDate\n)",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "RunDate",
+        "dependsOn": []
+      }
+    ],
+    "parameters": {
+      "ProcessDate": {
+        "type": "string",
+        "defaultValue": "2026-09-27"
+      }
+    },
+    "variables": {
+      "RunDate": {
+        "type": "String"
+      }
+    }
+  }
+}
