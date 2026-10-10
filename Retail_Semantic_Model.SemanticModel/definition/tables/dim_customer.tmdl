@@ -1,0 +1,96 @@
+table dim_customer
+	lineageTag: e89660e5-d800-4f63-977d-430574f884e9
+	sourceLineageTag: [dbo].[dim_customer]
+
+	column CustomerKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 07bc1f6f-ad67-4ec9-9ac8-bbb16ea2144e
+		sourceLineageTag: CustomerKey
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: a0f375cf-a1e1-4d16-949b-7a1f8f92f54f
+		sourceLineageTag: CustomerID
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Gender
+		dataType: string
+		sourceProviderType: varchar(10)
+		lineageTag: 6830dee0-6e3b-485d-b134-e929b787d9e8
+		sourceLineageTag: Gender
+		summarizeBy: none
+		sourceColumn: Gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: b16a7df4-2fe7-4639-be3e-47fbb1ef8085
+		sourceLineageTag: Region
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 5706f768-ff8b-4807-8ffa-35f88263d7eb
+		sourceLineageTag: City
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column Age
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 3c59000b-7cd0-4eec-b1e7-3665b78bc60c
+		sourceLineageTag: Age
+		summarizeBy: none
+		sourceColumn: Age
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerSegment
+		dataType: string
+		sourceProviderType: varchar(20)
+		lineageTag: 38a6c7e0-1f61-493c-9323-0760add9c72d
+		sourceLineageTag: CustomerSegment
+		summarizeBy: none
+		sourceColumn: CustomerSegment
+
+		annotation SummarizationSetBy = Automatic
+
+	column SignUpDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: date
+		lineageTag: c21064f4-9a9d-4763-a298-a0a01880383b
+		sourceLineageTag: SignUpDate
+		summarizeBy: none
+		sourceColumn: SignUpDate
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_customer = entity
+		mode: directLake
+		source
+			entityName: dim_customer
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

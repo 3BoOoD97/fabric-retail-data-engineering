@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "KQLQueryset",
+    "displayName": "Retail_Sales_RealTime_KQL",
+    "description": "Retail_Sales_RealTime_KQL"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "ec40db17-09ce-924a-4f3a-abdd1b133614"
+  }
+}

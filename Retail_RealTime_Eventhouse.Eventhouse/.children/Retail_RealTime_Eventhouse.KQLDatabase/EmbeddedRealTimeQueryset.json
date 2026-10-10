@@ -1,0 +1,22 @@
+{
+  "queryset": {
+    "version": "1.0.0",
+    "dataSources": [
+      {
+        "id": "cc75d2d8-2557-432d-8a90-15bbe6b74bea",
+        "clusterUri": "https://trd-96rbhpw1zgxqm89kuc.z7.kusto.fabric.microsoft.com",
+        "type": "Fabric",
+        "databaseItemId": "d9267221-66ac-4913-b5bb-cbe612ace7bd"
+      }
+    ],
+    "tabs": [
+      {
+        "id": "cbb51e15-6867-4878-8f49-83e4f1d563cb",
+        "content": "//***********************************************************************************************************\n// Here are two articles to help you get started with KQL:\n// KQL reference guide - https://aka.ms/KQLguide\n// SQL - KQL conversions - https://aka.ms/sqlcheatsheet\n//***********************************************************************************************************\n\nRetailSalesEvents\n| order by EventTime desc\n| take 10\n",
+        "title": "Tab",
+        "dataSourceId": "cc75d2d8-2557-432d-8a90-15bbe6b74bea"
+      }
+    ],
+    "querysetType": "Embedded"
+  }
+}

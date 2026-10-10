@@ -1,0 +1,1051 @@
+{
+  "sources": [
+    {
+      "id": "542aaf2d-e544-4ed8-ad47-788266926b5f",
+      "name": "Retail_POS_Source",
+      "type": "CustomEndpoint",
+      "properties": {},
+      "inputSchemas": [
+        {
+          "name": "18kvgzk",
+          "schema": {
+            "columns": [
+              {
+                "name": "OrderID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "EventTime",
+                "type": "DateTime",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CustomerID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CategoryName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Quantity",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "UnitPrice",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "DiscountRate",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "NetAmount",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              }
+            ]
+          }
+        },
+        {
+          "name": "1yabkz8",
+          "schema": {
+            "columns": [
+              {
+                "name": "EventID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderLineID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "EventTime",
+                "type": "DateTime",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CustomerID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CategoryName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Quantity",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "UnitPrice",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "DiscountRate",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "NetAmount",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "destinations": [
+    {
+      "id": "cb9a75f9-2566-4f1a-9ae9-3e3ce8b58efc",
+      "name": "Retail_Sales_Eventhouse_Destination",
+      "type": "Eventhouse",
+      "properties": {
+        "dataIngestionMode": "ProcessedIngestion",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "itemId": "12ace7bd-cbe6-b5bb-4913-66acd9267221",
+        "databaseName": "Retail_RealTime_Eventhouse",
+        "tableName": "RetailSalesEvents",
+        "inputSerialization": {
+          "type": "Json",
+          "properties": {
+            "encoding": "UTF8"
+          }
+        }
+      },
+      "inputNodes": [
+        {
+          "name": "Mapper"
+        }
+      ],
+      "inputSchemas": [
+        {
+          "name": "Mapper",
+          "schema": {
+            "columns": [
+              {
+                "name": "EventID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderLineID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "EventTime",
+                "type": "DateTime",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CustomerID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Quantity",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "UnitPrice",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "DiscountRate",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "NetAmount",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CategoryName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "streams": [
+    {
+      "id": "5d0bcbc0-9e16-4db7-b02c-d812aebc7beb",
+      "name": "Retail_Sales_Eventstream-stream",
+      "type": "DefaultStream",
+      "properties": {},
+      "inputNodes": [
+        {
+          "name": "Retail_POS_Source"
+        }
+      ]
+    }
+  ],
+  "operators": [
+    {
+      "name": "Mapper",
+      "type": "ManageFields",
+      "inputNodes": [
+        {
+          "name": "Validate_Discount_Max"
+        }
+      ],
+      "properties": {
+        "columns": [
+          {
+            "type": "Rename",
+            "properties": {
+              "column": {
+                "expressionType": "ColumnReference",
+                "node": null,
+                "columnName": "EventID",
+                "columnPathSegments": []
+              }
+            },
+            "alias": "EventID"
+          },
+          {
+            "type": "Rename",
+            "properties": {
+              "column": {
+                "expressionType": "ColumnReference",
+                "node": null,
+                "columnName": "OrderLineID",
+                "columnPathSegments": []
+              }
+            },
+            "alias": "OrderLineID"
+          },
+          {
+            "type": "Rename",
+            "properties": {
+              "column": {
+                "expressionType": "ColumnReference",
+                "node": null,
+                "columnName": "OrderID",
+                "columnPathSegments": []
+              }
+            },
+            "alias": "OrderID"
+          },
+          {
+            "type": "Rename",
+            "properties": {
+              "column": {
+                "expressionType": "ColumnReference",
+                "node": null,
+                "columnName": "EventTime",
+                "columnPathSegments": []
+              }
+            },
+            "alias": "EventTime"
+          },
+          {
+            "type": "Rename",
+            "properties": {
+              "column": {
+                "expressionType": "ColumnReference",
+                "node": null,
+                "columnName": "CustomerID",
+                "columnPathSegments": []
+              }
+            },
+            "alias": "CustomerID"
+          },
+          {
+            "type": "Rename",
+            "properties": {
+              "column": {
+                "expressionType": "ColumnReference",
+                "node": null,
+                "columnName": "ProductID",
+                "columnPathSegments": []
+              }
+            },
+            "alias": "ProductID"
+          },
+          {
+            "type": "Rename",
+            "properties": {
+              "column": {
+                "expressionType": "ColumnReference",
+                "node": null,
+                "columnName": "ProductName",
+                "columnPathSegments": []
+              }
+            },
+            "alias": "ProductName"
+          },
+          {
+            "type": "Rename",
+            "properties": {
+              "column": {
+                "expressionType": "ColumnReference",
+                "node": null,
+                "columnName": "Quantity",
+                "columnPathSegments": []
+              }
+            },
+            "alias": "Quantity"
+          },
+          {
+            "type": "Rename",
+            "properties": {
+              "column": {
+                "expressionType": "ColumnReference",
+                "node": null,
+                "columnName": "UnitPrice",
+                "columnPathSegments": []
+              }
+            },
+            "alias": "UnitPrice"
+          },
+          {
+            "type": "Rename",
+            "properties": {
+              "column": {
+                "expressionType": "ColumnReference",
+                "node": null,
+                "columnName": "DiscountRate",
+                "columnPathSegments": []
+              }
+            },
+            "alias": "DiscountRate"
+          },
+          {
+            "type": "Rename",
+            "properties": {
+              "column": {
+                "expressionType": "ColumnReference",
+                "node": null,
+                "columnName": "NetAmount",
+                "columnPathSegments": []
+              }
+            },
+            "alias": "NetAmount"
+          },
+          {
+            "type": "Rename",
+            "properties": {
+              "column": {
+                "expressionType": "ColumnReference",
+                "node": null,
+                "columnName": "CategoryName",
+                "columnPathSegments": []
+              }
+            },
+            "alias": "CategoryName"
+          }
+        ]
+      },
+      "inputSchemas": [
+        {
+          "name": "Validate_Discount_Max",
+          "schema": {
+            "columns": [
+              {
+                "name": "EventID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderLineID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "EventTime",
+                "type": "DateTime",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CustomerID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CategoryName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Quantity",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "UnitPrice",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "DiscountRate",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "NetAmount",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validate_Discount",
+      "type": "Filter",
+      "inputNodes": [
+        {
+          "name": "Validate_Quantity"
+        }
+      ],
+      "properties": {
+        "conditions": [
+          {
+            "column": {
+              "expressionType": "ColumnReference",
+              "node": null,
+              "columnName": "DiscountRate",
+              "columnPathSegments": []
+            },
+            "operatorType": "GreaterThanOrEquals",
+            "value": {
+              "expressionType": "Literal",
+              "dataType": "Float",
+              "value": "0"
+            }
+          }
+        ]
+      },
+      "inputSchemas": [
+        {
+          "name": "Validate_Quantity",
+          "schema": {
+            "columns": [
+              {
+                "name": "EventID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderLineID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "EventTime",
+                "type": "DateTime",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CustomerID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CategoryName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Quantity",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "UnitPrice",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "DiscountRate",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "NetAmount",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validate_Discount_Max",
+      "type": "Filter",
+      "inputNodes": [
+        {
+          "name": "Validate_Discount"
+        }
+      ],
+      "properties": {
+        "conditions": [
+          {
+            "column": {
+              "expressionType": "ColumnReference",
+              "node": null,
+              "columnName": "DiscountRate",
+              "columnPathSegments": []
+            },
+            "operatorType": "LessThanOrEquals",
+            "value": {
+              "expressionType": "Literal",
+              "dataType": "Float",
+              "value": "1"
+            }
+          }
+        ]
+      },
+      "inputSchemas": [
+        {
+          "name": "Validate_Discount",
+          "schema": {
+            "columns": [
+              {
+                "name": "EventID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderLineID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "EventTime",
+                "type": "DateTime",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CustomerID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CategoryName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Quantity",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "UnitPrice",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "DiscountRate",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "NetAmount",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validate_Events",
+      "type": "Filter",
+      "inputNodes": [
+        {
+          "name": "Retail_Sales_Eventstream-stream",
+          "schemaName": "1yabkz8"
+        }
+      ],
+      "properties": {
+        "conditions": [
+          {
+            "column": {
+              "expressionType": "ColumnReference",
+              "node": null,
+              "columnName": "EventID",
+              "columnPathSegments": []
+            },
+            "operatorType": "IsNotNullOrEmpty",
+            "value": null
+          }
+        ]
+      },
+      "inputSchemas": [
+        {
+          "name": "Retail_Sales_Eventstream-stream",
+          "schema": {
+            "columns": [
+              {
+                "name": "EventID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderLineID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "EventTime",
+                "type": "DateTime",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CustomerID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CategoryName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Quantity",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "UnitPrice",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "DiscountRate",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "NetAmount",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validate_OrderLineID",
+      "type": "Filter",
+      "inputNodes": [
+        {
+          "name": "Validate_Events"
+        }
+      ],
+      "properties": {
+        "conditions": [
+          {
+            "column": {
+              "expressionType": "ColumnReference",
+              "node": null,
+              "columnName": "OrderLineID",
+              "columnPathSegments": []
+            },
+            "operatorType": "IsNotNullOrEmpty",
+            "value": null
+          }
+        ]
+      },
+      "inputSchemas": [
+        {
+          "name": "Validate_Events",
+          "schema": {
+            "columns": [
+              {
+                "name": "EventID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderLineID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "EventTime",
+                "type": "DateTime",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CustomerID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CategoryName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Quantity",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "UnitPrice",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "DiscountRate",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "NetAmount",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validate_Quantity",
+      "type": "Filter",
+      "inputNodes": [
+        {
+          "name": "Validate_OrderLineID"
+        }
+      ],
+      "properties": {
+        "conditions": [
+          {
+            "column": {
+              "expressionType": "ColumnReference",
+              "node": null,
+              "columnName": "Quantity",
+              "columnPathSegments": []
+            },
+            "operatorType": "GreaterThan",
+            "value": {
+              "expressionType": "Literal",
+              "dataType": "BigInt",
+              "value": "0"
+            }
+          }
+        ]
+      },
+      "inputSchemas": [
+        {
+          "name": "Validate_OrderLineID",
+          "schema": {
+            "columns": [
+              {
+                "name": "EventID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderLineID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "OrderID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "EventTime",
+                "type": "DateTime",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CustomerID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductID",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "ProductName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "CategoryName",
+                "type": "Nvarchar(max)",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "Quantity",
+                "type": "BigInt",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "UnitPrice",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "DiscountRate",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              },
+              {
+                "name": "NetAmount",
+                "type": "Float",
+                "fields": null,
+                "items": null
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "compatibilityLevel": "1.1"
+}
