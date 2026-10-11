@@ -1,0 +1,76 @@
+table 'Time Intelligence'
+	lineageTag: dcdbe47e-750c-4677-b5e2-626c298001f1
+
+	calculationGroup
+
+		calculationItem Current = SELECTEDMEASURE()
+
+			formatStringDefinition = SELECTEDMEASUREFORMATSTRING()
+
+		calculationItem YTD =
+				TOTALYTD(
+				    SELECTEDMEASURE(),
+				    'dim_date'[FullDate]
+				)
+
+			formatStringDefinition = SELECTEDMEASUREFORMATSTRING()
+
+		calculationItem PY =
+				CALCULATE(
+				    SELECTEDMEASURE(),
+				    SAMEPERIODLASTYEAR('dim_date'[FullDate])
+				)
+
+			formatStringDefinition = SELECTEDMEASUREFORMATSTRING()
+
+		calculationItem YoY =
+				VAR _Current =
+				    SELECTEDMEASURE()
+				
+				VAR _PY =
+				    CALCULATE(
+				        SELECTEDMEASURE(),
+				        SAMEPERIODLASTYEAR('dim_date'[FullDate])
+				    )
+				
+				RETURN
+				    _Current - _PY
+
+			formatStringDefinition = SELECTEDMEASUREFORMATSTRING()
+
+		calculationItem 'YoY %' =
+				VAR _Current =
+				    SELECTEDMEASURE()
+				
+				VAR _PY =
+				    CALCULATE(
+				        SELECTEDMEASURE(),
+				        SAMEPERIODLASTYEAR('dim_date'[FullDate])
+				    )
+				
+				RETURN
+				    DIVIDE(
+				        _Current - _PY,
+				        _PY
+				    )
+
+			formatStringDefinition = "0.0%"
+
+	column 'Time Calculation'
+		dataType: string
+		lineageTag: 02407d82-6a87-4e9e-818c-e35a994043f4
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordinal
+		dataType: int64
+		formatString: 0
+		lineageTag: 8506cd36-cff4-4886-bdd7-9eb6f7ba51ff
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+

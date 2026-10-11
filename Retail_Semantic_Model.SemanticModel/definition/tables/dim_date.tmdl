@@ -1,0 +1,113 @@
+table dim_date
+	lineageTag: ec65e76a-b20a-4c1d-bfd0-ae657310908d
+	sourceLineageTag: [dbo].[dim_date]
+
+	column DateKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 60b5f27c-a82e-4617-bf9a-b16d53808d4d
+		sourceLineageTag: DateKey
+		summarizeBy: none
+		sourceColumn: DateKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column FullDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: date
+		lineageTag: f84090d8-8c20-4888-acf0-315fcd3406ef
+		sourceLineageTag: FullDate
+		summarizeBy: none
+		sourceColumn: FullDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column Day
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 02d35386-05d7-4998-a45a-6f05ff0779b7
+		sourceLineageTag: Day
+		summarizeBy: none
+		sourceColumn: Day
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 08954f7c-9be8-4a74-8f16-d65b1a83ecad
+		sourceLineageTag: Month
+		summarizeBy: none
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthName
+		dataType: string
+		sourceProviderType: varchar(20)
+		lineageTag: 33087fa2-2c27-4bc4-8328-120273f150fb
+		sourceLineageTag: MonthName
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: Month
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 49541fe1-fe72-427d-9481-37808f86807c
+		sourceLineageTag: Quarter
+		summarizeBy: none
+		sourceColumn: Quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 78f2e41b-4e32-4b91-84f3-33784791ce9a
+		sourceLineageTag: Year
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Date Hierarchy'
+		lineageTag: d5f85cfb-56e9-4309-b883-dfac20763c61
+
+		level Year
+			lineageTag: c869f715-5c4d-4e74-a6b4-4fe105b3e2cf
+			column: Year
+
+		level Quarter
+			lineageTag: e095ab05-0774-4d06-8447-2003fac28f77
+			column: Quarter
+
+		level MonthName
+			lineageTag: 4c4c931b-e705-4eec-ae67-ac300436800e
+			column: MonthName
+
+		level Day
+			lineageTag: 7b7f006d-5205-4b9f-bfad-8cf73783b7ae
+			column: Day
+
+		changedProperty = Name
+
+	partition dim_date = entity
+		mode: directLake
+		source
+			entityName: dim_date
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

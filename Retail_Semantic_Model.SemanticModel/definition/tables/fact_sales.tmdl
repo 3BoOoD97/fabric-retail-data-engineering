@@ -1,0 +1,215 @@
+table fact_sales
+	lineageTag: 1614aec9-8035-4a88-9767-897048141486
+	sourceLineageTag: [dbo].[fact_sales]
+
+	measure 'Total Revenue' =
+			
+			SUM(fact_sales[NetAmount])
+		lineageTag: df8eceee-c5cf-4b70-8ee5-c0212f710c37
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Profit' =
+			
+			SUM(fact_sales[ProfitAmount])
+		lineageTag: d920aec5-7f36-4de2-b08d-1c8da5b9ea2c
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Units' =
+			
+			SUM(fact_sales[Quantity])
+		formatString: 0
+		lineageTag: b788264b-1d4f-423f-b149-9e9e9b59aae4
+
+		changedProperty = Name
+
+	measure 'Margin %' =
+			
+			VAR _Revenue = [Total Revenue]
+			VAR _Profit = [Total Profit]
+			RETURN
+			    DIVIDE(_Profit, _Revenue)
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: e765f244-0c78-44b6-beee-21ea30b756a0
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+	column OrderID
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: e1472fd4-8293-434e-a98d-5c45abd74fbe
+		sourceLineageTag: OrderID
+		summarizeBy: none
+		sourceColumn: OrderID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 2ded0c4b-9fce-4812-877b-a90981c3238e
+		sourceLineageTag: CustomerKey
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 7b41f86e-fcb2-4290-a088-3ae87dc8394f
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column DateKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: ecf7db3c-08e1-466c-8a96-ef4ab4ce28c4
+		sourceLineageTag: DateKey
+		summarizeBy: none
+		sourceColumn: DateKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: b61df362-02c9-4be7-a74f-88935c81e89c
+		sourceLineageTag: Quantity
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitCost
+		dataType: double
+		sourceProviderType: decimal(18, 2)
+		lineageTag: 16cc301e-f55f-4810-8818-101e205588c2
+		sourceLineageTag: UnitCost
+		summarizeBy: sum
+		sourceColumn: UnitCost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column UnitPrice
+		dataType: double
+		sourceProviderType: decimal(18, 2)
+		lineageTag: c1ab3289-23af-4a79-9857-ca9f719cb067
+		sourceLineageTag: UnitPrice
+		summarizeBy: sum
+		sourceColumn: UnitPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DiscountRate
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		sourceProviderType: decimal(5, 4)
+		lineageTag: 30e58619-b65e-427a-a5df-014b7a63739c
+		sourceLineageTag: DiscountRate
+		summarizeBy: sum
+		sourceColumn: DiscountRate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column GrossAmount
+		dataType: double
+		sourceProviderType: decimal(18, 2)
+		lineageTag: b98c1406-f867-4ec9-a730-709dd4568dab
+		sourceLineageTag: GrossAmount
+		summarizeBy: sum
+		sourceColumn: GrossAmount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DiscountAmount
+		dataType: double
+		sourceProviderType: decimal(18, 2)
+		lineageTag: 64a3665f-0711-4199-8b75-d2a35658eabe
+		sourceLineageTag: DiscountAmount
+		summarizeBy: sum
+		sourceColumn: DiscountAmount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column NetAmount
+		dataType: double
+		sourceProviderType: decimal(18, 2)
+		lineageTag: a1cda2c7-5af1-4c8a-b031-744d8a32417c
+		sourceLineageTag: NetAmount
+		summarizeBy: sum
+		sourceColumn: NetAmount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CostAmount
+		dataType: double
+		sourceProviderType: decimal(18, 2)
+		lineageTag: bb574229-bf97-47a7-ae36-956605f16e95
+		sourceLineageTag: CostAmount
+		summarizeBy: sum
+		sourceColumn: CostAmount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ProfitAmount
+		dataType: double
+		sourceProviderType: decimal(18, 2)
+		lineageTag: c3ff3100-bdb8-4652-8913-2da3684b8210
+		sourceLineageTag: ProfitAmount
+		summarizeBy: sum
+		sourceColumn: ProfitAmount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ReturnAmount
+		dataType: double
+		sourceProviderType: decimal(18, 2)
+		lineageTag: a5bdddae-b4ff-43da-a757-ed66836fe809
+		sourceLineageTag: ReturnAmount
+		summarizeBy: sum
+		sourceColumn: ReturnAmount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fact_sales = entity
+		mode: directLake
+		source
+			entityName: fact_sales
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

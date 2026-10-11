@@ -1,0 +1,22 @@
+{
+  "queryset": {
+    "version": "1.0.0",
+    "dataSources": [
+      {
+        "id": "ba09119a-74d6-4e05-b705-91af23dc0e68",
+        "clusterUri": "",
+        "type": "Fabric",
+        "databaseItemId": "12ace7bd-cbe6-b5bb-4913-66acd9267221"
+      }
+    ],
+    "tabs": [
+      {
+        "id": "1bc641e2-cc8f-46a2-8d23-213d4801cd40",
+        "content": "//***********************************************************************************************************\n// Here are two articles to help you get started with KQL:\n// KQL reference guide - https://aka.ms/KQLguide\n// SQL - KQL conversions - https://aka.ms/sqlcheatsheet\n//***********************************************************************************************************\n\n// Create RetailSalesEvents table\n\n.create table RetailSalesEvents (\n    EventID: string,\n    OrderLineID: string,\n    OrderID: string,\n    EventTime: datetime,\n    CustomerID: string,\n    ProductID: string,\n    ProductName: string,\n    CategoryName: string,\n    Quantity: int,\n    UnitPrice: real,\n    DiscountRate: real,\n    NetAmount: real\n)\n\n// Verify the schema\n.show table RetailSalesEvents cslschema\n\n// Configure retention policy\n.alter-merge table RetailSalesEvents policy retention softdelete = 30d recoverability = enabled\n\n.show table RetailSalesEvents policy retention\n\n\n// // 5 min real-time sales aggregation. Analyze revenue, unique orders, and units sold during the last 24 hours.\nRetailSalesEvents\n| where EventTime > ago(24h)\n| summarize\n    Revenue = sum(NetAmount),\n    Orders = dcount(OrderID),\n    UnitsSold = sum(Quantity)\n    by bin(EventTime, 5m)\n| order by EventTime asc\n\n\n\n//Inspect latest POS events\nRetailSalesEvents\n| order by EventTime desc\n| project EventID, OrderLineID, OrderID, EventTime, ProductName, Quantity, UnitPrice, NetAmount\n| take 10",
+        "title": "Eventhouse_Setup_and_Analysis",
+        "dataSourceId": "ba09119a-74d6-4e05-b705-91af23dc0e68"
+      }
+    ],
+    "querysetType": "Standalone"
+  }
+}
