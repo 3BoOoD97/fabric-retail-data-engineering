@@ -1,0 +1,75 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "d0136f32da2cd0ee2907",
+  "position": {
+    "x": 968.88888888888891,
+    "y": 482.22222222222223,
+    "z": 3,
+    "height": 300,
+    "width": 300,
+    "tabOrder": 3
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "RetailSalesEvents"
+                    }
+                  },
+                  "Property": "EventTime"
+                }
+              },
+              "queryRef": "RetailSalesEvents.EventTime",
+              "nativeQueryRef": "EventTime",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "RetailSalesEvents"
+                    }
+                  },
+                  "Property": "Real-Time Revenue"
+                }
+              },
+              "queryRef": "RetailSalesEvents.Real-Time Revenue",
+              "nativeQueryRef": "Real-Time Revenue"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "RetailSalesEvents"
+                  }
+                },
+                "Property": "EventTime"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

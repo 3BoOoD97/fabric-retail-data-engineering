@@ -1,0 +1,185 @@
+table fact_sales
+	lineageTag: 81a33c98-448d-4487-a51a-776802ca06d9
+	sourceLineageTag: 1614aec9-8035-4a88-9767-897048141486
+
+	measure 'Total Revenue' = EXTERNALMEASURE("Total Revenue", DOUBLE, "DirectQuery to AS - Retail_Semantic_Model")
+		lineageTag: 4927da5b-e7a3-4905-bcb6-730442d277cb
+		sourceLineageTag: df8eceee-c5cf-4b70-8ee5-c0212f710c37
+		dataCategory: Uncategorized
+
+		formatStringDefinition = EXTERNALMEASURE("_Total Revenue FormatString", STRING, "DirectQuery to AS - Retail_Semantic_Model")
+
+	measure 'Total Profit' = EXTERNALMEASURE("Total Profit", DOUBLE, "DirectQuery to AS - Retail_Semantic_Model")
+		lineageTag: ddd5b7c7-ce18-4813-a26a-6e5f48986c40
+		sourceLineageTag: d920aec5-7f36-4de2-b08d-1c8da5b9ea2c
+		dataCategory: Uncategorized
+
+		formatStringDefinition = EXTERNALMEASURE("_Total Profit FormatString", STRING, "DirectQuery to AS - Retail_Semantic_Model")
+
+	measure 'Total Units' = EXTERNALMEASURE("Total Units", INTEGER, "DirectQuery to AS - Retail_Semantic_Model")
+		lineageTag: 8cdd7213-1b5d-452b-b0cd-974fb9f109c4
+		sourceLineageTag: b788264b-1d4f-423f-b149-9e9e9b59aae4
+		dataCategory: Uncategorized
+
+		formatStringDefinition = EXTERNALMEASURE("_Total Units FormatString", STRING, "DirectQuery to AS - Retail_Semantic_Model")
+
+	measure 'Margin %' = EXTERNALMEASURE("Margin %", DOUBLE, "DirectQuery to AS - Retail_Semantic_Model")
+		lineageTag: a0ec0954-c771-484d-8200-0084b1a79a42
+		sourceLineageTag: e765f244-0c78-44b6-beee-21ea30b756a0
+		dataCategory: Uncategorized
+
+		formatStringDefinition = EXTERNALMEASURE("_Margin % FormatString", STRING, "DirectQuery to AS - Retail_Semantic_Model")
+
+	column OrderID
+		dataType: string
+		lineageTag: b73b0c52-83f3-4832-bc02-e99ee5845a47
+		sourceLineageTag: e1472fd4-8293-434e-a98d-5c45abd74fbe
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: OrderID
+
+		annotation SummarizationSetBy = User
+
+	column CustomerKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 25ddcf4f-e9a1-4693-8920-b90837b8e9d1
+		sourceLineageTag: 2ded0c4b-9fce-4812-877b-a90981c3238e
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		annotation SummarizationSetBy = User
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		lineageTag: a4d06789-d883-4529-ade3-7e8e767fe111
+		sourceLineageTag: 7b41f86e-fcb2-4290-a088-3ae87dc8394f
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = User
+
+	column DateKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 5b4199d3-0d4b-4256-8fa4-cc391a133105
+		sourceLineageTag: ecf7db3c-08e1-466c-8a96-ef4ab4ce28c4
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: DateKey
+
+		annotation SummarizationSetBy = User
+
+	column Quantity
+		dataType: int64
+		formatString: 0
+		lineageTag: 4031c6ef-fa79-4c69-9156-adbe70a27dfe
+		sourceLineageTag: b61df362-02c9-4be7-a74f-88935c81e89c
+		dataCategory: Uncategorized
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+		annotation SummarizationSetBy = User
+
+	column UnitCost
+		dataType: double
+		lineageTag: 3408b177-a877-4660-9bbd-36b8ce69c41b
+		sourceLineageTag: 16cc301e-f55f-4810-8818-101e205588c2
+		dataCategory: Uncategorized
+		summarizeBy: sum
+		sourceColumn: UnitCost
+
+		annotation SummarizationSetBy = User
+
+	column UnitPrice
+		dataType: double
+		lineageTag: b88f75b0-9775-4c41-a03a-294c7618d330
+		sourceLineageTag: c1ab3289-23af-4a79-9857-ca9f719cb067
+		dataCategory: Uncategorized
+		summarizeBy: sum
+		sourceColumn: UnitPrice
+
+		annotation SummarizationSetBy = User
+
+	column DiscountRate
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 38de7e40-d2e8-4343-9e8f-bb1cf8944029
+		sourceLineageTag: 30e58619-b65e-427a-a5df-014b7a63739c
+		dataCategory: Uncategorized
+		summarizeBy: sum
+		sourceColumn: DiscountRate
+
+		annotation SummarizationSetBy = User
+
+	column GrossAmount
+		dataType: double
+		lineageTag: 2c5820a9-2aa0-40bc-a01e-d7d0f01dc3a6
+		sourceLineageTag: b98c1406-f867-4ec9-a730-709dd4568dab
+		dataCategory: Uncategorized
+		summarizeBy: sum
+		sourceColumn: GrossAmount
+
+		annotation SummarizationSetBy = User
+
+	column DiscountAmount
+		dataType: double
+		lineageTag: d1b5861c-9e8b-48a6-b14a-c6936e97c4af
+		sourceLineageTag: 64a3665f-0711-4199-8b75-d2a35658eabe
+		dataCategory: Uncategorized
+		summarizeBy: sum
+		sourceColumn: DiscountAmount
+
+		annotation SummarizationSetBy = User
+
+	column NetAmount
+		dataType: double
+		lineageTag: 93f66b63-a45e-494c-aaf7-a353bb1a0120
+		sourceLineageTag: a1cda2c7-5af1-4c8a-b031-744d8a32417c
+		dataCategory: Uncategorized
+		summarizeBy: sum
+		sourceColumn: NetAmount
+
+		annotation SummarizationSetBy = User
+
+	column CostAmount
+		dataType: double
+		lineageTag: 831f5671-82f3-450f-8fb2-e0cbc3fa913a
+		sourceLineageTag: bb574229-bf97-47a7-ae36-956605f16e95
+		dataCategory: Uncategorized
+		summarizeBy: sum
+		sourceColumn: CostAmount
+
+		annotation SummarizationSetBy = User
+
+	column ProfitAmount
+		dataType: double
+		lineageTag: a182ffd8-2623-4966-aba1-a2d9935500ff
+		sourceLineageTag: c3ff3100-bdb8-4652-8913-2da3684b8210
+		dataCategory: Uncategorized
+		summarizeBy: sum
+		sourceColumn: ProfitAmount
+
+		annotation SummarizationSetBy = User
+
+	column ReturnAmount
+		dataType: double
+		lineageTag: b499c0cc-0c23-4619-ae3a-83f8f1ae7c40
+		sourceLineageTag: a5bdddae-b4ff-43da-a757-ed66836fe809
+		dataCategory: Uncategorized
+		summarizeBy: sum
+		sourceColumn: ReturnAmount
+
+		annotation SummarizationSetBy = User
+
+	partition fact_sales = entity
+		mode: directQuery
+		source
+			entityName: fact_sales
+			expressionSource: 'DirectQuery to AS - Retail_Semantic_Model'
+
+	annotation PBI_ResultType = Exception
+

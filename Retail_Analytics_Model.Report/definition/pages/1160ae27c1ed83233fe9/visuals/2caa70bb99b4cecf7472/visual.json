@@ -1,0 +1,125 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "2caa70bb99b4cecf7472",
+  "position": {
+    "x": 178.88888888888889,
+    "y": 482.22222222222223,
+    "z": 4,
+    "height": 357.77777777777777,
+    "width": 668.88888888888891,
+    "tabOrder": 4
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "RetailSalesEvents"
+                    }
+                  },
+                  "Property": "EventTime"
+                }
+              },
+              "queryRef": "RetailSalesEvents.EventTime",
+              "nativeQueryRef": "EventTime"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "RetailSalesEvents"
+                    }
+                  },
+                  "Property": "OrderID"
+                }
+              },
+              "queryRef": "RetailSalesEvents.OrderID",
+              "nativeQueryRef": "OrderID"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "RetailSalesEvents"
+                    }
+                  },
+                  "Property": "ProductName"
+                }
+              },
+              "queryRef": "RetailSalesEvents.ProductName",
+              "nativeQueryRef": "ProductName"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "RetailSalesEvents"
+                    }
+                  },
+                  "Property": "CategoryName"
+                }
+              },
+              "queryRef": "RetailSalesEvents.CategoryName",
+              "nativeQueryRef": "CategoryName"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "RetailSalesEvents"
+                    }
+                  },
+                  "Property": "Quantity"
+                }
+              },
+              "queryRef": "Sum(RetailSalesEvents.Quantity)",
+              "nativeQueryRef": "Quantity"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "RetailSalesEvents"
+                    }
+                  },
+                  "Property": "NetAmount"
+                }
+              },
+              "queryRef": "Sum(RetailSalesEvents.NetAmount)",
+              "nativeQueryRef": "NetAmount"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "RetailSalesEvents"
+                  }
+                },
+                "Property": "EventTime"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

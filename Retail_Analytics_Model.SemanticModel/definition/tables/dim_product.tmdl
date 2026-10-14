@@ -1,0 +1,68 @@
+table dim_product
+	lineageTag: e51ad10e-0bae-4919-957d-8afde89170c6
+	sourceLineageTag: ac4a6535-8cbd-4de6-a244-b8a6ef9fb15b
+
+	column ProductKey
+		dataType: int64
+		isNullable: false
+		formatString: 0
+		lineageTag: bd64927e-ad1e-4f16-bdcd-d73d40c96ba2
+		sourceLineageTag: 260865c7-d623-4435-a216-21be5d8ee24f
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = User
+
+	column ProductID
+		dataType: string
+		lineageTag: 06798463-45eb-4515-9c12-4c45c6ba9e3e
+		sourceLineageTag: 1a77ce61-9cf1-4182-88c4-f6538724a2f6
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		annotation SummarizationSetBy = User
+
+	column ProductName
+		dataType: string
+		lineageTag: 8d87a46b-6a85-4290-9353-f26276f1fb9d
+		sourceLineageTag: 00199589-244d-4a80-a5e2-95e9ac96c860
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = User
+
+	column CategoryName
+		dataType: string
+		lineageTag: cf3e4303-e9b1-4f17-966d-c95559c535a0
+		sourceLineageTag: 845c99df-9a64-4cf5-9dae-84aa5cad94fd
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: CategoryName
+
+		annotation SummarizationSetBy = User
+
+	hierarchy 'Product Hierarchy'
+		lineageTag: b18bbc3e-b07c-468d-9981-f9c3bccc4c89
+		sourceLineageTag: 96b2b912-a9be-419f-8596-5b43c907bbab
+
+		level CategoryName
+			lineageTag: 9a41a950-23c8-4885-80e2-c2f6e3a8eaea
+			sourceLineageTag: d81b6f34-a298-4542-90d8-f648ed89e45a
+			column: CategoryName
+
+		level ProductName
+			lineageTag: 9f565d74-dbaf-433c-887e-edbadacdab73
+			sourceLineageTag: ac1fdcef-f0a2-4171-adf6-fc13e7fe000e
+			column: ProductName
+
+	partition dim_product = entity
+		mode: directQuery
+		source
+			entityName: dim_product
+			expressionSource: 'DirectQuery to AS - Retail_Semantic_Model'
+
+	annotation PBI_ResultType = Exception
+

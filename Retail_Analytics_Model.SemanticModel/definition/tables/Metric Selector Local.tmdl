@@ -1,0 +1,50 @@
+table 'Metric Selector Local'
+	lineageTag: 3d64aea7-b78f-4035-87cd-a0ce95d53b24
+
+	column 'Metric Selector Local'
+		lineageTag: 20dad4a8-c272-4d84-81b2-d59ff3769442
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Metric Selector Local Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Metric Selector Local Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Metric Selector Local Fields'
+		isHidden
+		lineageTag: 2fba042d-8f4d-4224-8499-a0f41da8e426
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Metric Selector Local Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Metric Selector Local Order'
+		isHidden
+		formatString: 0
+		lineageTag: f196a1c6-b0c0-4e30-9aee-59af5fc79528
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Metric Selector Local' = calculated
+		mode: import
+		source =
+				{
+				    ("Total Profit", NAMEOF('fact_sales'[Total Profit]), 0),
+				    ("Total Revenue", NAMEOF('fact_sales'[Total Revenue]), 1),
+				    ("Total Units", NAMEOF('fact_sales'[Total Units]), 2),
+				    ("Margin %", NAMEOF('fact_sales'[Margin %]), 3)
+				}
+
+	annotation PBI_Id = 139d952c9a7c42be950110bf5cf67a81
+

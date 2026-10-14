@@ -1,0 +1,96 @@
+table dim_customer
+	lineageTag: af9359d0-e16b-4dac-8fe3-a1593b4c0bdc
+	sourceLineageTag: e89660e5-d800-4f63-977d-430574f884e9
+
+	column CustomerKey
+		dataType: int64
+		isNullable: false
+		formatString: 0
+		lineageTag: d42805e8-3964-4350-818e-139cc7b13081
+		sourceLineageTag: 07bc1f6f-ad67-4ec9-9ac8-bbb16ea2144e
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		annotation SummarizationSetBy = User
+
+	column CustomerID
+		dataType: string
+		lineageTag: b1b55505-01da-4e6f-abd2-90204a14ee26
+		sourceLineageTag: a0f375cf-a1e1-4d16-949b-7a1f8f92f54f
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = User
+
+	column Gender
+		dataType: string
+		lineageTag: 4b24208c-5bc3-4a9e-aaac-1079f8a3444c
+		sourceLineageTag: 6830dee0-6e3b-485d-b134-e929b787d9e8
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: Gender
+
+		annotation SummarizationSetBy = User
+
+	column Region
+		dataType: string
+		lineageTag: 2382174d-ace7-4a87-928f-03a5c8a4e4a1
+		sourceLineageTag: b16a7df4-2fe7-4639-be3e-47fbb1ef8085
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = User
+
+	column City
+		dataType: string
+		lineageTag: cd8c5109-bdee-43ef-b14e-ffbdb92fc603
+		sourceLineageTag: 5706f768-ff8b-4807-8ffa-35f88263d7eb
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = User
+
+	column Age
+		dataType: int64
+		formatString: 0
+		lineageTag: b64d613e-44e5-47f0-83c3-bb7f2b8cea59
+		sourceLineageTag: 3c59000b-7cd0-4eec-b1e7-3665b78bc60c
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: Age
+
+		annotation SummarizationSetBy = User
+
+	column CustomerSegment
+		dataType: string
+		lineageTag: 27435536-c866-4f8a-99ed-207ed61a195e
+		sourceLineageTag: 38a6c7e0-1f61-493c-9323-0760add9c72d
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: CustomerSegment
+
+		annotation SummarizationSetBy = User
+
+	column SignUpDate
+		dataType: dateTime
+		formatString: General Number
+		lineageTag: 79346760-8f4a-410f-b30c-1a8f4971b2c4
+		sourceLineageTag: c21064f4-9a9d-4763-a298-a0a01880383b
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: SignUpDate
+
+		annotation SummarizationSetBy = User
+
+	partition dim_customer = entity
+		mode: directQuery
+		source
+			entityName: dim_customer
+			expressionSource: 'DirectQuery to AS - Retail_Semantic_Model'
+
+	annotation PBI_ResultType = Exception
+

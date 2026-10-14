@@ -1,0 +1,34 @@
+table 'Time Intelligence'
+	lineageTag: 203d4009-d1cb-4693-92f8-775741a76fe8
+	sourceLineageTag: dcdbe47e-750c-4677-b5e2-626c298001f1
+
+	column 'Time Calculation'
+		dataType: string
+		lineageTag: 6cb18c43-27bb-4e54-8618-b0c051ed5e51
+		sourceLineageTag: 02407d82-6a87-4e9e-818c-e35a994043f4
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: Time Calculation
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = User
+
+	column Ordinal
+		dataType: int64
+		formatString: 0
+		lineageTag: 7f1e9e2d-a035-4395-81f9-105b5d0d4f79
+		sourceLineageTag: 8506cd36-cff4-4886-bdd7-9eb6f7ba51ff
+		dataCategory: Uncategorized
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = User
+
+	partition 'Time Intelligence' = entity
+		mode: directQuery
+		source
+			entityName: Time Intelligence
+			expressionSource: 'DirectQuery to AS - Retail_Semantic_Model'
+
+	annotation PBI_ResultType = Exception
+
