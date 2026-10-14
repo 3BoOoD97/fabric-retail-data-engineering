@@ -1,0 +1,52 @@
+table 'Metric Selector '
+	lineageTag: 0b580e6d-07f6-4154-9a76-66169c4c3a72
+	sourceLineageTag: 53e38028-b3c9-4188-b7ed-b494592d1c59
+
+	column 'Metric Selector '
+		dataType: string
+		lineageTag: c7965885-58c8-4dcf-9403-725fe2d3167f
+		sourceLineageTag: 9b037589-1f78-4292-9e01-2badcc1b0803
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: "Metric Selector "
+		sortByColumn: 'Metric Selector  Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Metric Selector  Fields'
+
+		annotation SummarizationSetBy = User
+
+	column 'Metric Selector  Fields'
+		dataType: string
+		isHidden
+		lineageTag: 757e83b5-2af1-4dba-8e6e-815508565b24
+		sourceLineageTag: 13f55e57-a8d9-4557-b73a-aa1d99032718
+		dataCategory: Uncategorized
+		summarizeBy: none
+		sourceColumn: Metric Selector  Fields
+		sortByColumn: 'Metric Selector  Order'
+
+		annotation SummarizationSetBy = User
+
+	column 'Metric Selector  Order'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1a2bbace-7d01-4049-b48e-66ae7d944a28
+		sourceLineageTag: e8d18f30-e9f0-468d-ab57-128c66f16218
+		dataCategory: Uncategorized
+		summarizeBy: sum
+		sourceColumn: Metric Selector  Order
+
+		annotation SummarizationSetBy = User
+
+	partition 'Metric Selector ' = entity
+		mode: directQuery
+		source
+			entityName = ```
+				Metric Selector 
+				```
+			expressionSource: 'DirectQuery to AS - Retail_Semantic_Model'
+
+	annotation PBI_ResultType = Exception
+

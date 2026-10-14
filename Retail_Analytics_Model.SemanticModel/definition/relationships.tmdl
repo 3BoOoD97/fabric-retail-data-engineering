@@ -1,0 +1,12 @@
+relationship 09b01195-4825-432b-a117-e126f2f0dd97
+	fromColumn: fact_sales.ProductKey
+	toColumn: dim_product.ProductKey
+
+relationship 65ac9fd6-f28d-45ef-aeba-57725a6aa4d6
+	fromColumn: fact_sales.CustomerKey
+	toColumn: dim_customer.CustomerKey
+
+relationship 0c7b1cc3-dc70-4b2a-9c51-eb965f5d5e23
+	fromColumn: fact_sales.DateKey
+	toColumn: dim_date.DateKey
+

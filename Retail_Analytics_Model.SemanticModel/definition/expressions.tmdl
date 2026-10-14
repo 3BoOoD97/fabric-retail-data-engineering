@@ -1,0 +1,11 @@
+expression 'DirectQuery to AS - Retail_Semantic_Model' =
+		let
+		    Source = AnalysisServices.Database("powerbi://api.powerbi.com/v1.0/myorg/retail_Workspace", "Retail_Semantic_Model"),
+		    Cubes = Table.Combine(Source[Data]),
+		    Cube = Cubes{[Id="Model", Kind="Cube"]}[Data]
+		in
+		    Cube
+	lineageTag: fe9c5875-1b46-47d7-9637-0497b1acfa10
+
+	annotation PBI_IncludeFutureArtifacts = True
+

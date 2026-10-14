@@ -1,0 +1,131 @@
+table RetailSalesEvents
+	lineageTag: 6c5fb05c-238a-4094-a1bf-108a528a9f8d
+
+	measure 'Real-Time Revenue' =
+			
+			SUM(RetailSalesEvents[NetAmount])
+		lineageTag: 7949b73a-5581-4372-a8f9-357cd5103ca8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Real-Time Orders' =
+			
+			DISTINCTCOUNT(RetailSalesEvents[OrderID])
+		formatString: 0
+		lineageTag: c57ceb3e-05ea-4c9e-b57a-ebd71304e5a4
+
+	measure 'Real-Time Units' =
+			
+			SUM(RetailSalesEvents[Quantity])
+		formatString: 0
+		lineageTag: 99055b62-20b0-418a-a0c8-236915930f07
+
+	column OrderID
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 9e4e4a87-3a40-4686-a23e-be29d67dfa8d
+		summarizeBy: none
+		sourceColumn: OrderID
+
+		annotation SummarizationSetBy = Automatic
+
+	column EventTime
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetimeoffset
+		lineageTag: e9386383-8fb1-40ed-a722-72cb01fd30ad
+		summarizeBy: none
+		sourceColumn: EventTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 8cac96b2-a1c8-49fa-8fdf-f55e1ece590d
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 0610ff93-3b4f-4039-8117-a807c31ee635
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductName
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 1cfbcb67-99bf-4fdc-93ca-ccebe248a107
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CategoryName
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 5ca6cfba-c36f-4fd7-b26d-5b4eb47ac710
+		summarizeBy: none
+		sourceColumn: CategoryName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: a01c7c43-c5dc-4ffa-8e31-c8322b25f3d7
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitPrice
+		dataType: double
+		sourceProviderType: double
+		lineageTag: 3d8351a2-aab0-4951-89b9-37cd3910c3fc
+		summarizeBy: sum
+		sourceColumn: UnitPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DiscountRate
+		dataType: double
+		sourceProviderType: double
+		lineageTag: 63468804-6ac4-4ed6-8796-f6acd384e2e0
+		summarizeBy: sum
+		sourceColumn: DiscountRate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column NetAmount
+		dataType: double
+		sourceProviderType: double
+		lineageTag: 7f366ded-7bbb-4cc9-872f-add8a0489d65
+		summarizeBy: sum
+		sourceColumn: NetAmount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition RetailSalesEvents = m
+		mode: directQuery
+		source =
+				let
+				    Source = AzureDataExplorer.Contents("https://trd-96rbhpw1zgxqm89kuc.z7.kusto.fabric.microsoft.com", "Retail_RealTime_Eventhouse", null, [MaxRows=null, MaxSize=null, NoTruncate=null, AdditionalSetStatements=null]),
+				    RetailSalesEvents1 = Source{[Name="RetailSalesEvents"]}[Data]
+				in
+				    RetailSalesEvents1
+
+	annotation PBI_ResultType = Table
+
