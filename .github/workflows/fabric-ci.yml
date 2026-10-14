@@ -1,0 +1,28 @@
+name: Fabric CI - Connection Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-fabric-connection:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test Fabric API connection
+        env:
+          CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        run: |
+          TOKEN=$(curl -s -X POST \
+            "https://login.microsoftonline.com/$TENANT_ID/oauth2/v2.0/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "client_id=$CLIENT_ID" \
+            -d "client_secret=$CLIENT_SECRET" \
+            -d "scope=https://api.fabric.microsoft.com/.default" \
+            -d "grant_type=client_credentials" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+
+          curl --fail \
+            -H "Authorization: Bearer $TOKEN" \
+            "https://api.fabric.microsoft.com/v1/workspaces"
