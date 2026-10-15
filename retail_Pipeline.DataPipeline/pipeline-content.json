@@ -43,7 +43,7 @@
                 "location": {
                   "type": "LakehouseLocation",
                   "folderPath": {
-                    "value": "@concat('incoming/orders/', formatDateTime(pipeline().parameters.ProcessDate, 'yyyy/MM/dd'))",
+                    "value": "@concat('incoming/orders/',replace(variables('RunDate'), '-', '/')\n)",
                     "type": "Expression"
                   },
                   "fileName": "orders_daily.csv"
@@ -102,7 +102,7 @@
                   "type": "AzureBlobStorageLocation",
                   "container": "retail-incoming",
                   "folderPath": {
-                    "value": "@formatDateTime(pipeline().parameters.ProcessDate, 'yyyy/MM/dd')",
+                    "value": "@replace(variables('RunDate'),'-','/')",
                     "type": "Expression"
                   },
                   "fileName": "order_details_daily.csv"
@@ -125,7 +125,7 @@
                 "location": {
                   "type": "LakehouseLocation",
                   "folderPath": {
-                    "value": "@concat('incoming/order_details/', formatDateTime(variables('RunDate'), 'yyyy/MM/dd'))",
+                    "value": "@concat('incoming/order_details/',replace(variables('RunDate'), '-', '/')\n)",
                     "type": "Expression"
                   },
                   "fileName": "order_details_daily.csv"
@@ -398,7 +398,7 @@
                     "type": "BinaryReadSettings"
                   },
                   "storeSettings": {
-                    "type": "LakehouseReadSettings",
+                    "type": "AzureBlobStorageReadSettings",
                     "recursive": false
                   },
                   "datasetSettings": {
@@ -407,7 +407,7 @@
                       "location": {
                         "type": "LakehouseLocation",
                         "folderPath": {
-                          "value": "@concat(\n    'incoming/orders/',\n    formatDateTime(pipeline().parameters.ProcessDate, 'yyyy/MM/dd')\n)",
+                          "value": "@concat(\n  'incoming/orders/',\n  replace(variables('RunDate'), '-', '/')\n)",
                           "type": "Expression"
                         },
                         "fileName": "orders_daily.csv"
@@ -434,7 +434,7 @@
                 "sink": {
                   "type": "BinarySink",
                   "storeSettings": {
-                    "type": "LakehouseWriteSettings"
+                    "type": "AzureBlobStorageWriteSettings"
                   },
                   "datasetSettings": {
                     "type": "Binary",
@@ -487,7 +487,7 @@
                     "type": "BinaryReadSettings"
                   },
                   "storeSettings": {
-                    "type": "LakehouseReadSettings",
+                    "type": "AzureBlobStorageReadSettings",
                     "recursive": false
                   },
                   "datasetSettings": {
@@ -523,7 +523,7 @@
                 "sink": {
                   "type": "BinarySink",
                   "storeSettings": {
-                    "type": "LakehouseWriteSettings"
+                    "type": "AzureBlobStorageWriteSettings"
                   },
                   "datasetSettings": {
                     "type": "Binary",
@@ -531,7 +531,7 @@
                       "location": {
                         "type": "LakehouseLocation",
                         "folderPath": {
-                          "value": "@concat('quarantine/order_details/', formatDateTime(pipeline().parameters.ProcessDate, 'yyyy/MM/dd'))",
+                          "value": "@concat(\n  'quarantine/order_details/',\n  replace(variables('RunDate'), '-', '/')\n)",
                           "type": "Expression"
                         },
                         "fileName": "order_details_daily.csv"
@@ -686,8 +686,7 @@
     ],
     "parameters": {
       "ProcessDate": {
-        "type": "string",
-        "defaultValue": "2026-09-27"
+        "type": "string"
       }
     },
     "variables": {
