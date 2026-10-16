@@ -25,7 +25,6 @@
 # This value will be overwritten by the Pipeline
 ProcessDate = "2026-09-26"
 
-
 # METADATA ********************
 
 # META {
@@ -321,16 +320,6 @@ target.alias("target_table").merge(source.alias("source_table"), "target_table.C
 
 
 
-
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
 
 
 # METADATA ********************
