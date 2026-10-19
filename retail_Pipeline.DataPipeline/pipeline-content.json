@@ -314,7 +314,7 @@
               "name": "Daily_Transformation_Passed",
               "dependsOn": [
                 {
-                  "activity": "Gold_Daily_Incremental_Notebook",
+                  "activity": "Warehouse_Incremental_SP",
                   "dependencyConditions": [
                     "Succeeded"
                   ]
@@ -356,6 +356,84 @@
                   "activity": "Gold_Daily_Incremental_Notebook",
                   "dependencyConditions": [
                     "Failed"
+                  ]
+                },
+                {
+                  "activity": "Warehouse_Incremental_Notebook",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                },
+                {
+                  "activity": "Warehouse_Incremental_SP",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": "7f621c09-adc3-9cd4-48d8-bf83fb9e55fd",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "ProcessDate": {
+                    "value": {
+                      "value": "@variables('RunDate')",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  }
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Warehouse_Incremental_Notebook",
+              "dependsOn": [
+                {
+                  "activity": "Gold_Daily_Incremental_Notebook",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SqlServerStoredProcedure",
+              "typeProperties": {
+                "storedProcedureName": "[dbo].[usp_incremental_load_warehouse]"
+              },
+              "linkedService": {
+                "name": "retail_warehouse",
+                "properties": {
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "artifactId": "37642084-6c06-80cf-4022-799714934941",
+                    "endpoint": "a4ymiwe4uerexgquiqrv7q7eeu-vrbxnkrvzndufjpqjepybxsszm.datawarehouse.fabric.microsoft.com",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "annotations": []
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Warehouse_Incremental_SP",
+              "dependsOn": [
+                {
+                  "activity": "Warehouse_Incremental_Notebook",
+                  "dependencyConditions": [
+                    "Succeeded"
                   ]
                 }
               ]
