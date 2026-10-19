@@ -1,0 +1,51 @@
+name: Fabric CI/CD
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-to-development:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install fabric-cicd azure-identity
+
+      - name: Deploy Fabric items to Development workspace
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          FABRIC_WORKSPACE_ID: ${{ secrets.FABRIC_WORKSPACE_ID }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from azure.identity import ClientSecretCredential
+          from fabric_cicd import FabricWorkspace, publish_all_items
+
+          root_directory = Path(os.environ["GITHUB_WORKSPACE"]).resolve()
+
+          credential = ClientSecretCredential(
+              tenant_id=os.environ["AZURE_TENANT_ID"],
+              client_id=os.environ["AZURE_CLIENT_ID"],
+              client_secret=os.environ["AZURE_CLIENT_SECRET"],
+          )
+
+          workspace = FabricWorkspace(
+              workspace_id=os.environ["FABRIC_WORKSPACE_ID"],
+              repository_directory=str(root_directory),
+              token_credential=credential,
+          )
+
+          publish_all_items(workspace)
+          PY
