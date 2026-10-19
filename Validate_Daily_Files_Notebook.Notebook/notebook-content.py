@@ -22,8 +22,8 @@
 
 # PARAMETERS CELL ********************
 
+# This value will be overwritten by the Pipeline
 ProcessDate = "2026-09-26"
-
 
 # METADATA ********************
 

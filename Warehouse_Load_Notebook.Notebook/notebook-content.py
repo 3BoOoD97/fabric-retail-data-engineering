@@ -22,14 +22,7 @@
 
 # CELL ********************
 
-# Load the tables from the silver layer
-
-df_categories_silver=spark.table("silver.categories")
-df_customers_silver=spark.table("silver.customers")
-df_order_details_silver=spark.table("silver.order_details")
-df_orders_silver=spark.table("silver.orders")
-df_products_silver=spark.table("silver.products")
-
+#### This notebook should be run ONLY when we add the data for the first time !!!
 
 # METADATA ********************
 
@@ -40,19 +33,16 @@ df_products_silver=spark.table("silver.products")
 
 # CELL ********************
 
-from pyspark.sql.window import Window
-from pyspark.sql.functions import row_number
+from pyspark.sql.functions import (col,date_format,dayofmonth,month,quarter,year)
 import com.microsoft.spark.fabric
 from com.microsoft.spark.fabric.Constants import Constants
 
 
-windowSpec = Window.orderBy("CustomerID")
-
-df_dim_customer = df_customers_silver.withColumn("CustomerKey", row_number().over(windowSpec))
-
-df_dim_customer = df_dim_customer.select("CustomerKey", "CustomerID", "Gender", "Region", "City", "Age", "CustomerSegment", "SignUpDate")
-
-df_dim_customer.write.mode("append").synapsesql("retail_warehouse.dbo.dim_customer")
+df_categories_silver = spark.table("silver.categories")
+df_customers_silver = spark.table("silver.customers")
+df_order_details_silver = spark.table("silver.order_details")
+df_orders_silver = spark.table("silver.orders")
+df_products_silver = spark.table("silver.products")
 
 # METADATA ********************
 
@@ -63,32 +53,11 @@ df_dim_customer.write.mode("append").synapsesql("retail_warehouse.dbo.dim_custom
 
 # CELL ********************
 
-# MAGIC %%sql
-# MAGIC SELECT COUNT(*) FROM retail_warehouse.dbo.dim_customer;
+# Add data from Customers silver to df_stg_customer
 
-# METADATA ********************
+df_stg_customer = df_customers_silver.select("CustomerID","Gender","Region","City","Age","CustomerSegment","SignUpDate")
 
-# META {
-# META   "language": "sparksql",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-from pyspark.sql.window import Window
-from pyspark.sql.functions import row_number
-import com.microsoft.spark.fabric
-from com.microsoft.spark.fabric.Constants import Constants
-
-
-windowSpec = Window.orderBy("ProductID")
-
-df_dim_products = df_categories_products_join = df_categories_silver.join(df_products_silver,"CategoryID", "inner")\
-.select("CategoryName","ProductID", "ProductName").withColumn("ProductKey", row_number().over(windowSpec))
-
-df_dim_products.write.mode("append").synapsesql("retail_warehouse.dbo.dim_product")
-
-
+df_stg_customer.write .mode("overwrite").synapsesql("retail_warehouse.dbo.stg_dim_customer")
 
 # METADATA ********************
 
@@ -99,36 +68,47 @@ df_dim_products.write.mode("append").synapsesql("retail_warehouse.dbo.dim_produc
 
 # CELL ********************
 
-# MAGIC %%sql
-# MAGIC SELECT * FROM retail_warehouse.dbo.dim_product;
+# Add data from Product silver to df_stg_product
+
+df_stg_product = (
+    df_categories_silver
+    .join(df_products_silver, "CategoryID", "inner")
+    .select(
+        "ProductID",
+        "ProductName",
+        "CategoryName"
+    )
+)
+
+df_stg_product.write.mode("overwrite").synapsesql("retail_warehouse.dbo.stg_dim_product")
 
 # METADATA ********************
 
 # META {
-# META   "language": "sparksql",
+# META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
 
 # CELL ********************
 
-from pyspark.sql.window import Window
-from pyspark.sql.functions import row_number,col,date_format,dayofmonth,month,quarter,year
-import com.microsoft.spark.fabric
-from com.microsoft.spark.fabric.Constants import Constants
+
+# Add data from date silver to dim_date
 
 
-df_dim_date = (df_orders_silver.select(col("OrderDate").alias("FullDate")).distinct()
+df_dim_date = (
+    df_orders_silver
+    .select(col("OrderDate").alias("FullDate"))
+    .distinct()
     .withColumn("DateKey", date_format(col("FullDate"), "yyyyMMdd").cast("int"))
     .withColumn("Day", dayofmonth(col("FullDate")))
     .withColumn("Month", month(col("FullDate")))
     .withColumn("MonthName", date_format(col("FullDate"), "MMMM"))
     .withColumn("Quarter", quarter(col("FullDate")))
     .withColumn("Year", year(col("FullDate")))
-    .select("DateKey","FullDate", "Day", "Month", "MonthName", "Quarter","Year"
-    ).orderBy("FullDate")
+    .select("DateKey","FullDate","Day","Month","MonthName","Quarter","Year")
 )
 
-df_dim_date.write .mode("append").synapsesql("retail_warehouse.dbo.dim_date")
+df_dim_date.write.mode("append").synapsesql("retail_warehouse.dbo.dim_date")
 
 
 
@@ -141,51 +121,13 @@ df_dim_date.write .mode("append").synapsesql("retail_warehouse.dbo.dim_date")
 
 # CELL ********************
 
-# MAGIC %%sql
-# MAGIC SELECT count (*) FROM retail_warehouse.dbo.dim_date
+# Read generated surrogate keys
 
+df_dim_product = (spark.read.synapsesql("retail_warehouse.dbo.dim_product").select("ProductKey","ProductID"))
 
-# METADATA ********************
+df_dim_customer = (spark.read.synapsesql("retail_warehouse.dbo.dim_customer").select("CustomerKey","CustomerID"))
 
-# META {
-# META   "language": "sparksql",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-# One row = one product within one order
-from pyspark.sql.window import Window
-from pyspark.sql.functions import row_number,col,date_format,dayofmonth,month,quarter,year
-import com.microsoft.spark.fabric
-from com.microsoft.spark.fabric.Constants import Constants
-
-
-# Read dimensions from Warehouse
-df_dim_product = spark.read.synapsesql("retail_warehouse.dbo.dim_product").select("ProductKey", "ProductID")
-
-df_dim_customer = spark.read.synapsesql("retail_warehouse.dbo.dim_customer").select("CustomerKey", "CustomerID")
-
-df_dim_date = spark.read.synapsesql("retail_warehouse.dbo.dim_date").select("DateKey", "FullDate")
-
-
-df_dim_fact_sales = df_order_details_silver.join(df_orders_silver, "OrderID", "inner").select("OrderID", "ProductID", "CustomerID", "OrderDate", "Quantity", "UnitCost", "UnitPrice", "DiscountRate", "GrossAmount",
-"DiscountAmount", "NetAmount", "CostAmount","ProfitAmount","ReturnAmount")
-
-
-df_dim_fact_sales = df_dim_fact_sales.join(df_dim_product, "ProductID", "inner")
-
-df_dim_fact_sales = df_dim_fact_sales.join(df_dim_customer, "CustomerID", "inner")
-
-df_dim_fact_sales = df_dim_fact_sales.join( df_dim_date, df_dim_fact_sales["OrderDate"] == df_dim_date["FullDate"], "inner")
-
-# Keep only the columns required by fact_sales
-df_dim_fact_sales = df_dim_fact_sales.select("OrderID", "CustomerKey", "ProductKey", "DateKey", "Quantity", "UnitCost", 
-"UnitPrice", "DiscountRate", "GrossAmount", "DiscountAmount", "NetAmount", "CostAmount", "ProfitAmount", "ReturnAmount")
-
-# Load into Warehouse
-df_dim_fact_sales.write.mode("append").synapsesql("retail_warehouse.dbo.fact_sales")
-
+df_dim_date_lookup = (spark.read.synapsesql("retail_warehouse.dbo.dim_date").select("DateKey","FullDate"))
 
 # METADATA ********************
 
@@ -196,29 +138,130 @@ df_dim_fact_sales.write.mode("append").synapsesql("retail_warehouse.dbo.fact_sal
 
 # CELL ********************
 
-# MAGIC %%sql
-# MAGIC 
-# MAGIC SELECT COUNT(*)
-# MAGIC FROM retail_warehouse.dbo.fact_sales;
+# Build fact_sales table
+df_fact_sales = (df_order_details_silver.join(df_orders_silver,"OrderID","inner")
+    .select(
+        "OrderID",
+        "ProductID",
+        "CustomerID",
+        "OrderDate",
+        "Quantity",
+        "UnitCost",
+        "UnitPrice",
+        "DiscountRate",
+        "GrossAmount",
+        "DiscountAmount",
+        "NetAmount",
+        "CostAmount",
+        "ProfitAmount",
+        "ReturnAmount"
+    )
+)
 
 # METADATA ********************
 
 # META {
-# META   "language": "sparksql",
+# META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
 
 # CELL ********************
 
-df_dim_product.groupBy("ProductID").count().filter("count > 1").show()
+# Replace natural keys with Warehouse surrogate keys
+df_fact_sales = (df_fact_sales.join(
+        df_dim_product,
+        "ProductID",
+        "inner"
+    ).join(
+        df_dim_customer,
+        "CustomerID",
+        "inner"
+    ).join(
+        df_dim_date_lookup,
+        df_fact_sales["OrderDate"] == df_dim_date_lookup["FullDate"],
+        "inner"
+    )
+)
 
-df_dim_customer.groupBy("CustomerID").count().filter("count > 1").show()
+# METADATA ********************
 
-df_dim_date.groupBy("FullDate").count().filter("count > 1").show()
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
 
-df_dim_fact_sales.groupBy("OrderID", "ProductKey").count().filter("count > 1").show()
+# CELL ********************
 
-print(df_dim_fact_sales.count())
+# Final fact_sales schema
+df_fact_sales = df_fact_sales.select(
+    "OrderID",
+    "CustomerKey",
+    "ProductKey",
+    "DateKey",
+    "Quantity",
+    "UnitCost",
+    "UnitPrice",
+    "DiscountRate",
+    "GrossAmount",
+    "DiscountAmount",
+    "NetAmount",
+    "CostAmount",
+    "ProfitAmount",
+    "ReturnAmount"
+)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# Load fact_sales
+df_fact_sales.write.mode("append").synapsesql("retail_warehouse.dbo.fact_sales")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+print("Customers:", spark.read.synapsesql("retail_warehouse.dbo.dim_customer").count())
+
+print("Products:",spark.read.synapsesql("retail_warehouse.dbo.dim_product").count())
+
+print("Dates:",spark.read.synapsesql("retail_warehouse.dbo.dim_date").count())
+
+print("Fact rows:",spark.read.synapsesql("retail_warehouse.dbo.fact_sales").count())
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+df = spark.sql("SELECT * FROM retail_Lakhouse.bronze.orders LIMIT 1000")
+display(df)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+df = spark.sql("SELECT * FROM retail_Lakhouse.bronze.order_details LIMIT 1000")
+display(df)
 
 # METADATA ********************
 

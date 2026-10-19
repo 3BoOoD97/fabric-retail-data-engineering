@@ -1,7 +1,7 @@
 CREATE TABLE [dbo].[fact_sales] (
     [OrderID]        VARCHAR (50)    NOT NULL,
-    [CustomerKey]    INT             NOT NULL,
-    [ProductKey]     INT             NOT NULL,
+    [CustomerKey]    BIGINT          NOT NULL,
+    [ProductKey]     BIGINT          NOT NULL,
     [DateKey]        INT             NOT NULL,
     [Quantity]       INT             NULL,
     [UnitCost]       DECIMAL (18, 2) NULL,

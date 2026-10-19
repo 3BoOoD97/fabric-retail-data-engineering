@@ -25,7 +25,6 @@
 # This value will be overwritten by the Pipeline
 ProcessDate = "2026-09-26"
 
-
 # METADATA ********************
 
 # META {
@@ -178,9 +177,34 @@ target_order_details.alias("target_table").merge(source_order_details.alias("sou
 # CELL ********************
 
 # MAGIC %%sql
-# MAGIC SELECT * FROM silver.orders WHERE OrderID = 'ORD10003' or OrderID="ORD10002";
-# MAGIC SELECT * FROM silver.order_details WHERE OrderID IN ('ORD10002', 'ORD10003');
+# MAGIC SELECT * FROM silver.orders ORDER BY BatchDate DESC;
 
+# METADATA ********************
+
+# META {
+# META   "language": "sparksql",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+df = spark.read.format("csv").option("header","true").load("Files/incoming/orders/2026/10/14/orders_daily.csv")
+# df now is a Spark DataFrame containing CSV data from "Files/incoming/orders/2026/10/14/orders_daily.csv".
+display(df)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# MAGIC %%sql
+# MAGIC SELECT OrderID, BatchDate
+# MAGIC FROM bronze.orders
+# MAGIC ORDER BY BatchDate DESC;
 
 # METADATA ********************
 

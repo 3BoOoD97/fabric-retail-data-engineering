@@ -1,5 +1,5 @@
 CREATE TABLE [dbo].[dim_product] (
-    [ProductKey]   INT          NOT NULL,
+    [ProductKey]   BIGINT       IDENTITY NOT NULL,
     [ProductID]    VARCHAR (50) NULL,
     [ProductName]  VARCHAR (80) NULL,
     [CategoryName] VARCHAR (50) NULL

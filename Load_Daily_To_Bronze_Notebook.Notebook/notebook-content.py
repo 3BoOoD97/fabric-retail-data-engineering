@@ -20,12 +20,10 @@
 # META   }
 # META }
 
-# CELL ********************
+# PARAMETERS CELL ********************
 
 # This value will be overwritten by the Pipeline
 ProcessDate = "2026-09-26"
-
-
 
 # METADATA ********************
 
@@ -38,6 +36,8 @@ ProcessDate = "2026-09-26"
 
 from delta.tables import DeltaTable
 from pyspark.sql.functions import col,trim, lit
+
+print("ProcessDate:", ProcessDate)
 
 date_path = ProcessDate.replace("-", "/")
 
@@ -154,9 +154,10 @@ target_order_details.alias("target_table").merge(source_order_details.alias("sou
 # CELL ********************
 
 # MAGIC %%sql
-# MAGIC SELECT * FROM bronze.order_details WHERE OrderID IN ('ORD10002', 'ORD10003');
 # MAGIC 
-# MAGIC SELECT * FROM bronze.order_details LIMIT 10;
+# MAGIC SELECT * FROM bronze.orders ORDER BY BatchDate DESC LIMIT 10 ;
+# MAGIC SELECT * FROM silver.orders ORDER BY BatchDate DESC LIMIT 10 ;
+# MAGIC SELECT * FROM gold.daily_sales WHERE OrderDate = '2026-09-26';
 
 
 # METADATA ********************
