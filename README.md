@@ -1,4 +1,3 @@
-<img width="81" height="17" alt="image" src="https://github.com/user-attachments/assets/0ba2f6b1-7f92-41c9-a8b6-76c09c3464c1" /><img width="101" height="17" alt="image" src="https://github.com/user-attachments/assets/b86f9960-548c-4433-b22c-b672f88b5286" />
 # Retail Data Engineering & Analytics Platform
 
 ## 1. Project Overview
