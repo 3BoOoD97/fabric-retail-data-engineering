@@ -185,6 +185,15 @@ I also created DAX measures to calculate total revenue, total profit, units sold
 For real-time reporting, I used DirectQuery to connect Power BI to Eventhouse. The Real-Time Operations report shows new transactions, revenue, orders, and units sold in near real-time.
 The project has two Power BI reports: one for analyzing historical sales performance and another for monitoring new sales activity.
 
+**Executive Overview Report**
+![Executive Overview report](<docs/diagrams/BI_Reports/Executive Overview.png>)
+
+**Real-Time Operations Report**
+![Real-Time Operations report](<docs/diagrams/BI_Reports/Real-Time Operations.png>)
+
+
+
+
 
 ## 12. Security and Governance
 
